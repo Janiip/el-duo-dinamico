@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dajana helados/login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="s-login" class="pantalla activa">
+        <div class="lg-hd">
+            <div class="lg-n"><img src="img/dajana-logo.png" alt="logo dajana"></div>
+            <div class="lg-s">h e l a d o s</div>
+        </div>
+        <div class="lg-body">
+            <div class="lg-tit">LOGIN</div>
+            <div class="lg-form">
+                <div class="col-stack-7">
+                    <div class="c-lbl">USUARIO</div>
+                    <input class="c-inp" id="inp-u" type="text" placeholder="INGRESE NOMBRE DE USUARIO">
+                </div>
+                <div class="col-stack-7">
+                    <div class="c-lbl">CONTRASEÑA</div>
+                    <input class="c-inp" id="inp-p" type="password" placeholder="INGRESE CONTRASEÑA">
+                </div>
+                <div class="err" id="lg-err">Usuario o contraseña incorrectos</div>
+                <div class="center mt-6">
+                    <button class="btn btn-d btn-login" onclick="login()">INICIAR SESION</button>
+                </div>
+                <div class="login-hints">
+                    👤 admin / admin &nbsp;|&nbsp; 👤 empleado / empleado &nbsp;|&nbsp; 👤 ana / ana
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/state.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/historial.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/empleado.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

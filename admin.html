@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dajana helados/login/admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="s-panel" class="pantalla">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-s">helados</div>
+            </div>
+            <div class="h-btns">
+                <div class="h-rol">ADMIN</div>
+                <button class="btn btn-v" onclick="irA('s-historial','admin')">VENTAS</button>
+                <button class="btn btn-d" onclick="logout()">CERRAR SESIÓN</button>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="nav-tabs">
+                <button class="nav-tab" onclick="irA('s-sabores')">SABORES</button>
+                <button class="nav-tab" onclick="irA('s-accesorios')">ACCESORIOS</button>
+                <button class="nav-tab" onclick="irA('s-stock')">STOCK</button>
+                <button class="nav-tab" onclick="irA('s-historial','admin')">HISTORIAL</button>
+            </div>
+            <div class="panel-card">
+                <div class="p-tit">PANEL DE CONTROL</div>
+                <div id="panel-stats"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SABORES -->
+    <div id="s-sabores" class="pantalla">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-s">helados</div>
+            </div>
+            <div class="h-btns">
+                <div class="h-rol">ADMIN</div>
+                <button class="btn btn-v" onclick="irA('s-panel')">VOLVER</button>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="barra">
+                <div class="page-title flex-1 no-mb">SABORES</div>
+                <button class="btn btn-s btn-small" onclick="abrirModalCats('sabor')">⚙️ EDITAR SECCIONES</button>
+                <button class="btn btn-g" onclick="abrirModalSabor()">+ AGREGAR SABOR</button>
+            </div>
+            <div class="cat-tabs" id="sab-admin-tabs"></div>
+            <div id="sab-admin-body"></div>
+        </div>
+    </div>
+
+    <!-- ACCESORIOS -->
+    <div id="s-accesorios" class="pantalla">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-s">helados</div>
+            </div>
+            <div class="h-btns">
+                <div class="h-rol">ADMIN</div>
+                <button class="btn btn-v" onclick="irA('s-panel')">VOLVER</button>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="barra">
+                <div class="page-title flex-1 no-mb">ACCESORIOS</div>
+                <button class="btn btn-s btn-small" onclick="abrirModalCats('acc')">⚙️ EDITAR TIPOS</button>
+                <button class="btn btn-g" onclick="abrirModalAccesorio()">+ AGREGAR ACCESORIO</button>
+            </div>
+            <div class="tw">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NOMBRE</th>
+                            <th>TIPO</th>
+                            <th>PRECIO UNIT.</th>
+                            <th>STOCK</th>
+                            <th>UNIDAD</th>
+                            <th>✏️</th>
+                            <th>🗑</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-acc"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- STOCK -->
+    <div id="s-stock" class="pantalla">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-s">helados</div>
+            </div>
+            <div class="h-btns">
+                <div class="h-rol">ADMIN</div>
+                <button class="btn btn-v" onclick="irA('s-panel')">VOLVER</button>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="page-title">CONTROL DE STOCK</div>
+            <div class="cat-tabs mb-14">
+                <button class="cat-tab activo" onclick="stockTab(this,'stk-sab')">SABORES</button>
+                <button class="cat-tab" onclick="stockTab(this,'stk-acc')">ACCESORIOS</button>
+            </div>
+
+            <!-- Stock sabores -->
+            <div id="stk-sab" class="sec visible">
+                <div class="stock-filtros">
+                    <select class="stock-sel" id="stk-sab-cat">
+                        <option value="">Ver todos</option>
+                    </select>
+                    <input class="buscador" id="stk-sab-q" type="text" placeholder="🔍 Buscar sabor...">
+                </div>
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SABOR</th>
+                                <th>CATEGORÍA</th>
+                                <th>STOCK (litros)</th>
+                                <th>ESTADO</th>
+                                <th>✏️</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stk-tb-sab"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stock accesorios -->
+            <div id="stk-acc" class="sec">
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ACCESORIO</th>
+                                <th>TIPO</th>
+                                <th>STOCK</th>
+                                <th>UNIDAD</th>
+                                <th>ESTADO</th>
+                                <th>✏️</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stk-tb-acc"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- HISTORIAL -->
+    <div id="s-historial" class="pantalla">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-s">helados</div>
+            </div>
+            <div class="h-btns">
+                <div class="h-rol" id="hist-rol">ADMIN</div>
+                <button class="btn btn-v" onclick="volverHist()">VOLVER</button>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="page-title" id="hist-tit">HISTORIAL DE VENTAS</div>
+            <div class="frow">
+                <input class="buscador" id="ht" type="text" placeholder="🔍 Buscar empleado...">
+                <input class="buscador maxw-175" id="hf" type="date">
+                <button class="btn btn-s btn-clean" onclick="limpFilt()">✕ LIMPIAR</button>
+            </div>
+            <div class="tw-d">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>FECHA</th>
+                            <th>TOTAL</th>
+                            <th>PAGO</th>
+                            <th>EMPLEADO</th>
+                            <th>VER</th>
+                            <th>ELIM.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hist-tb"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETALLE -->
+    <div id="s-detalle" class="pantalla">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-s">helados</div>
+            </div>
+            <div class="h-btns">
+                <div class="h-rol" id="det-rol">ADMIN</div>
+                <button class="btn btn-v" onclick="irA('s-historial')">VOLVER</button>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="page-title">DETALLE DE VENTA</div>
+            <div class="det-card" id="det-cont"></div>
+        </div>
+    </div>
+
+    <!-- Modales (mismo JS que empleado.html; sin esto abrirModal falla) -->
+    <div class="modal-overlay" id="m-cats">
+        <div class="modal-box">
+            <div class="m-tit" id="m-cats-tit">EDITAR SECCIONES</div>
+            <input type="hidden" id="m-cats-modo">
+            <p class="m-help">Hacé clic en ✕ para eliminar. Escribí abajo para agregar una nueva.</p>
+            <div class="cat-list" id="m-cats-list"></div>
+            <div class="m-cats-row">
+                <input class="buscador m-cats-input" id="m-cats-nueva" type="text" placeholder="Nueva sección...">
+                <button class="btn btn-g m-cats-add" onclick="agregarCat()">＋</button>
+            </div>
+            <div class="err" id="m-cats-err"></div>
+            <div class="fbtns mt-14">
+                <button class="btn btn-g" onclick="guardarCats()">GUARDAR</button>
+                <button class="btn btn-s" onclick="cerrarModal('m-cats')">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="m-sabor">
+        <div class="modal-box">
+            <div class="m-tit" id="m-sab-tit">AGREGAR SABOR</div>
+            <input type="hidden" id="ms-id">
+            <div class="fg"><label>NOMBRE</label><input id="ms-nombre" type="text" placeholder="Ej: Chocolate amargo"></div>
+            <div class="fg"><label>CATEGORÍA</label><select id="ms-cat"></select></div>
+            <div class="fg"><label>PRECIO POR LITRO ($)</label><input id="ms-precio" type="number" min="0" placeholder="2500"></div>
+            <div class="fg"><label>STOCK (litros)</label><input id="ms-stock" type="number" min="0" step="0.5" placeholder="10"></div>
+            <div class="fbtns">
+                <button class="btn btn-g" onclick="guardarSabor()">GUARDAR</button>
+                <button class="btn btn-s" onclick="cerrarModal('m-sabor')">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="m-acc">
+        <div class="modal-box">
+            <div class="m-tit" id="m-acc-tit">AGREGAR ACCESORIO</div>
+            <input type="hidden" id="ma-id">
+            <div class="fg"><label>NOMBRE</label><input id="ma-nombre" type="text" placeholder="Ej: Cucurucho mediano"></div>
+            <div class="fg"><label>TIPO</label><select id="ma-tipo"></select></div>
+            <div class="fg"><label>PRECIO UNITARIO ($)</label><input id="ma-precio" type="number" min="0" placeholder="800"></div>
+            <div class="fg"><label>STOCK</label><input id="ma-stock" type="number" min="0" step="1" placeholder="50"></div>
+            <div class="fg">
+                <label>UNIDAD DE MEDIDA</label>
+                <select id="ma-unidad">
+                    <option value="unidades">unidades</option>
+                    <option value="cajas">cajas</option>
+                    <option value="kg">kg</option>
+                </select>
+            </div>
+            <div class="fbtns">
+                <button class="btn btn-g" onclick="guardarAccesorio()">GUARDAR</button>
+                <button class="btn btn-s" onclick="cerrarModal('m-acc')">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="m-stock">
+        <div class="modal-box">
+            <div class="m-tit">EDITAR STOCK</div>
+            <input type="hidden" id="mst-id">
+            <input type="hidden" id="mst-tipo">
+            <div class="fg"><label>PRODUCTO</label><input id="mst-nombre" readonly class="readonly-input"></div>
+            <div class="fg"><label id="mst-ulbl">NUEVO STOCK</label><input id="mst-val" type="number" min="0" step="0.5"></div>
+            <div class="fbtns">
+                <button class="btn btn-g" onclick="guardarStock()">GUARDAR</button>
+                <button class="btn btn-s" onclick="cerrarModal('m-stock')">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="m-confirm">
+        <div class="modal-box modal-center">
+            <div class="m-tit">⚠️ CONFIRMAR</div>
+            <p class="m-conf-text" id="m-conf-msg">¿Estás seguro?</p>
+            <div class="fbtns">
+                <button class="btn btn-r" id="m-conf-ok">ELIMINAR</button>
+                <button class="btn btn-s" onclick="cerrarModal('m-confirm')">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/state.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/historial.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/empleado.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
