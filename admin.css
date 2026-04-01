@@ -1,0 +1,521 @@
+:root {
+    --granate: #7a1020;
+    --granate-dark: #5a0a16;
+    --lavanda: #e8d5f0;
+    --salmon: #f5a898;
+    --salmon-light: #f9c4bc;
+    --dorado: #f5c842;
+    --dorado-light: #f9d96a;
+    --texto: #1a0a0a;
+    --blanco: #fff;
+    --rojo: #e53935;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--lavanda);
+    color: var(--texto);
+    min-height: 100vh;
+}
+
+/* ── NAVEGACIÓN POR :target ── */
+.pantalla {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+/* Panel es la página de inicio */
+.pantalla:target,
+body:not(:has(.pantalla:target)) #s-panel {
+    display: flex;
+}
+
+/* ── HEADER ── */
+.header {
+    background: var(--granate);
+    padding: 13px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-n img {
+    height: 3rem;
+    width: auto;
+}
+
+.logo-s {
+    font-size: .65rem;
+    color: var(--salmon-light);
+    letter-spacing: 4px;
+    text-align: center;
+}
+
+.h-rol {
+    font-family: 'Fredoka One', cursive;
+    font-size: .9rem;
+    color: var(--dorado-light);
+    letter-spacing: 1px;
+}
+
+.h-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ── BOTONES ── */
+.btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 30px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-d {
+    background: var(--dorado);
+    color: var(--texto);
+}
+
+.btn-g {
+    background: var(--granate);
+    color: var(--blanco);
+}
+
+.btn-s {
+    background: var(--salmon-light);
+    color: var(--texto);
+}
+
+.btn-r {
+    background: var(--rojo);
+    color: var(--blanco);
+}
+
+.btn-v {
+    background: var(--dorado);
+    color: var(--texto);
+    font-size: .76rem;
+    padding: 7px 16px;
+}
+
+.btn-small {
+    font-size: .76rem;
+}
+
+/* ── CONTENIDO ── */
+.contenido {
+    flex: 1;
+    padding: 22px;
+}
+
+/* ── NAV TABS ── */
+.nav-tabs {
+    background: var(--salmon-light);
+    border-radius: 14px;
+    padding: 11px 13px;
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.nav-tab {
+    background: var(--granate);
+    color: var(--blanco);
+    font-family: 'Fredoka One', cursive;
+    font-size: .85rem;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-tab:hover {
+    background: var(--granate-dark);
+    transform: translateY(-2px);
+}
+
+/* ── PANEL ── */
+.panel-card {
+    background: var(--salmon-light);
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.p-tit {
+    background: var(--granate);
+    color: var(--blanco);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    padding: 12px;
+    border-radius: 11px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.stat {
+    background: var(--lavanda);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.stat span {
+    color: var(--granate);
+    font-weight: 800;
+}
+
+/* ── TABLAS ── */
+.tw {
+    background: var(--salmon-light);
+    border-radius: 18px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.tw-d {
+    background: var(--dorado-light);
+    border-radius: 18px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: var(--granate);
+    color: var(--blanco);
+    font-family: 'Fredoka One', cursive;
+    font-size: .78rem;
+    letter-spacing: 2px;
+    padding: 10px 7px;
+    text-align: center;
+}
+
+td {
+    padding: 9px 7px;
+    text-align: center;
+    font-weight: 700;
+    font-size: .82rem;
+    border-bottom: 1px solid rgba(122, 16, 32, .1);
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: rgba(245, 200, 66, .15);
+}
+
+/* ── BADGES ── */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .73rem;
+    font-weight: 800;
+}
+
+.b-ok {
+    background: #c8f0c8;
+    color: #2e7d32;
+}
+
+.b-low {
+    background: #ffe0b2;
+    color: #e65100;
+}
+
+.b-no {
+    background: #ffcdd2;
+    color: #b71c1c;
+}
+
+/* ── CAT TABS ── */
+.cat-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.cat-tab {
+    background: var(--lavanda);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: inline-block;
+    color: var(--texto);
+    transition: all .15s;
+}
+
+.cat-tab.activo,
+.cat-tab:target {
+    background: var(--granate);
+    color: var(--blanco);
+}
+
+/* ── PAGE TITLE / BARRA ── */
+.page-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.35rem;
+    color: var(--granate);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.no-mb {
+    margin-bottom: 0;
+}
+
+.mb-14 {
+    margin-bottom: 14px;
+}
+
+/* ── STOCK FILTROS ── */
+.stock-filtros {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.stock-sel {
+    background: var(--lavanda);
+    border: 2px solid var(--salmon);
+    border-radius: 30px;
+    padding: 8px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    outline: none;
+    min-width: 160px;
+}
+
+.buscador {
+    flex: 1;
+    background: var(--lavanda);
+    border: 2px solid var(--salmon);
+    border-radius: 30px;
+    padding: 8px 15px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    outline: none;
+    min-width: 130px;
+}
+
+.buscador:focus,
+.stock-sel:focus {
+    border-color: var(--granate);
+}
+
+/* ── HISTORIAL ── */
+.frow {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 13px;
+    flex-wrap: wrap;
+}
+
+.maxw-175 {
+    max-width: 175px;
+}
+
+.btn-clean {
+    padding: 7px 13px;
+    font-size: .74rem;
+}
+
+/* ── DETALLE ── */
+.det-card {
+    background: var(--salmon-light);
+    border-radius: 18px;
+    padding: 22px;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.det-info {
+    margin-bottom: 9px;
+    font-weight: 700;
+}
+
+.det-info span {
+    color: var(--granate);
+    font-weight: 800;
+}
+
+/* ── ICON BUTTONS ── */
+.ib {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: .95rem;
+    padding: 3px 6px;
+    border-radius: 7px;
+    transition: background .15s;
+}
+
+.ib:hover {
+    background: rgba(0, 0, 0, .08);
+}
+
+/* ── TABS DE STOCK (radio hack) ── */
+.stock-radio {
+    display: none;
+}
+
+.stock-tabs-wrap {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.stock-tab-lbl {
+    background: var(--lavanda);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+#stk-tab-sab:checked~.stock-contenido .stock-tab-lbl[for="stk-tab-sab"],
+#stk-tab-acc:checked~.stock-contenido .stock-tab-lbl[for="stk-tab-acc"] {
+    background: var(--granate);
+    color: var(--blanco);
+}
+
+.stk-sec {
+    display: none;
+}
+
+#stk-tab-sab:checked~.stock-contenido #stk-sab {
+    display: block;
+}
+
+#stk-tab-acc:checked~.stock-contenido #stk-acc {
+    display: block;
+}
+
+@media(max-width:600px) {
+    .contenido {
+        padding: 13px;
+    }
+
+    th,
+    td {
+        font-size: .72rem;
+        padding: 7px 4px;
+    }
+
+    .nav-tab {
+        font-size: .76rem;
+        padding: 7px 11px;
+    }
+}
+
+/* ═══════════════ CSS :target para stock tabs ═══════════════ */
+/* Por defecto muestra sabores */
+#stk-sab {
+    display: block;
+}
+
+#stk-tab-sab:checked~.stock-contenido #stk-sab {
+    display: block;
+}
+
+#stk-tab-acc:checked~.stock-contenido #stk-acc {
+    display: block;
+}
+
+#stk-tab-acc:checked~.stock-contenido #stk-sab {
+    display: none;
+}
+
+#stk-tab-sab:checked~.stock-contenido #stk-acc {
+    display: none;
+}
+
+/* Label activo */
+#stk-tab-sab:checked~.stock-contenido label[for="stk-tab-sab"],
+#stk-tab-acc:checked~.stock-contenido label[for="stk-tab-acc"] {
+    background: var(--granate);
+    color: var(--blanco);
+    border-color: var(--granate-dark);
+}
+
+/* Fallback: si ningún target está activo, muestra #s-panel */
+body:not(:has(.pantalla:target)) #s-panel {
+    display: flex;
+}

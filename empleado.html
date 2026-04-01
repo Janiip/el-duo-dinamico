@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dajana helados/login/empleado</title>
+    <title>Dajana helados / Empleado</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="empleado.css">
 </head>
 
 <body>
-    <!-- EMPLEADO -->
+
     <div id="s-emp" class="pantalla">
         <div class="header">
             <div class="logo">
@@ -19,20 +19,19 @@
                 <div class="logo-s">helados</div>
             </div>
             <div class="h-btns">
-                <div class="h-rol" id="emp-hrol">EMPLEADO</div>
-                <button class="btn btn-d" onclick="logout()">CERRAR SESIÓN</button>
+                <div class="h-rol">EMPLEADO</div>
+                <a class="btn btn-d" href="index.html">CERRAR SESIÓN</a>
             </div>
         </div>
         <div class="emp-home">
-            <div class="emp-bv" id="emp-bv">¡Bienvenido/a! 🍦</div>
+            <div class="emp-bv">¡Bienvenida/o! 🍦</div>
             <div class="emp-btns">
-                <button class="emp-btn emp-btn-main" onclick="irA('s-venta')">🍦 REGISTRAR VENTA</button>
-                <button class="emp-btn emp-btn-sec" onclick="irA('s-historial','empleado')">📋 MIS VENTAS</button>
+                <a class="emp-btn emp-btn-main" href="#s-venta">🍦 REGISTRAR VENTA</a>
+                <a class="emp-btn emp-btn-sec" href="#s-historial">📋 MIS VENTAS</a>
             </div>
         </div>
     </div>
 
-    <!-- VENTA -->
     <div id="s-venta" class="pantalla">
         <div class="header">
             <div class="logo">
@@ -40,37 +39,89 @@
                 <div class="logo-s">helados</div>
             </div>
             <div class="h-btns">
-                <div class="h-rol" id="v-hrol">EMPLEADO</div>
-                <button class="btn btn-v" onclick="irA('s-emp')">VOLVER</button>
+                <div class="h-rol">EMPLEADO</div>
+                <a class="btn btn-v" href="#s-emp">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
             <div class="barra">
                 <div class="page-title flex-1 no-mb">REGISTRAR VENTA</div>
             </div>
-            <div class="carrito" id="carrito"></div>
-            <div class="carrito-add-wrap">
-                <button class="btn btn-s btn-add-item" onclick="agregarItem()">＋ AGREGAR PRODUCTO</button>
+
+            <div class="carrito">
+                <div class="item-v">
+                    <div class="item-hd">
+                        <div class="item-num">PRODUCTO 1</div>
+                        <div class="item-sub">$0</div>
+                    </div>
+                    <div class="v-fila">
+                        <div class="v-lbl">PRODUCTO</div>
+                        <select class="v-inp">
+                            <option value="">SELECCIONAR</option>
+                            <option>Pote 1/4 kg — $2.500</option>
+                            <option>Pote 1/2 kg — $4.500</option>
+                            <option>Pote 1 kg — $8.000</option>
+                            <option>Cucurucho — $800</option>
+                            <option>Vaso milkshake — $1.200</option>
+                            <option>Caja cucharitas — $1.500</option>
+                            <option>Caja servilletas — $900</option>
+                            <option>Toppings variados — $500</option>
+                        </select>
+                    </div>
+                    <div class="sab-wrap">
+                        <div class="sab-tit">🍦 ELEGIR SABOR/ES</div>
+                        <div class="sab-cat-tabs">
+                            <span class="chip">Chocolates</span>
+                            <span class="chip">Dulces de leche</span>
+                            <span class="chip">Frutas al agua</span>
+                            <span class="chip">Frutas a la crema</span>
+                            <span class="chip">Cremas</span>
+                            <span class="chip">Cremas especiales</span>
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;">
+                            <span class="chip">Chocolate</span>
+                            <span class="chip sel">Dulce de leche</span>
+                            <span class="chip">Chocolate amargo</span>
+                            <span class="chip agotado">Maracuyá ✗</span>
+                            <span class="chip">Frutilla</span>
+                            <span class="chip">Vainilla</span>
+                        </div>
+                        <div style="font-size:.73rem;color:var(--granate);font-weight:700;margin-top:6px;">
+                            ✅ Dulce de leche
+                        </div>
+                    </div>
+                    <div class="v-fila" style="margin-top:8px;">
+                        <div class="v-lbl">CANTIDAD</div>
+                        <input class="v-inp" type="number" min="1" value="1">
+                    </div>
+                    <div class="v-fila">
+                        <div class="v-lbl">PRECIO UNIT.</div>
+                        <input class="v-inp" readonly value="—">
+                    </div>
+                </div>
             </div>
-            <div class="spacer-14"></div>
-            <div class="total-box">TOTAL: <span id="v-total">$0</span></div>
-            <div class="spacer-11"></div>
+
+            <div class="carrito-add-wrap">
+                <button class="btn btn-s btn-add-item">＋ AGREGAR PRODUCTO</button>
+            </div>
+
+            <div class="total-box">TOTAL: <span>$0</span></div>
+
             <div class="pago-box">
                 <div class="pago-tit">MÉTODO DE PAGO</div>
                 <div class="pago-ops">
-                    <div class="p-op" id="pago-ef" onclick="selPago('efectivo')">EFECTIVO</div>
-                    <div class="p-op" id="pago-tr" onclick="selPago('transferencia')">TRANSFERENCIA</div>
+                    <div class="p-op">EFECTIVO</div>
+                    <div class="p-op" style="border-color:var(--granate);background:var(--salmon);">TRANSFERENCIA</div>
                 </div>
             </div>
-            <div class="err err-venta" id="v-err"></div>
+
             <div class="venta-btns">
-                <button class="btn btn-g btn-confirm" onclick="irTicket()">VER TICKET →</button>
-                <button class="btn btn-s" onclick="irA('s-emp')">CANCELAR</button>
+                <a class="btn btn-g btn-confirm" href="#s-ticket">VER TICKET →</a>
+                <a class="btn btn-s" href="#s-emp">CANCELAR</a>
             </div>
         </div>
     </div>
 
-    <!-- TICKET -->
     <div id="s-ticket" class="pantalla">
         <div class="header">
             <div class="logo">
@@ -79,51 +130,74 @@
             </div>
             <div class="h-btns">
                 <div class="h-rol">EMPLEADO</div>
-                <button class="btn btn-v" onclick="irA('s-venta')">✏️ EDITAR</button>
+                <a class="btn btn-v" href="#s-venta">✏️ EDITAR</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">REVISAR TICKETS</div>
+            <div class="page-title">REVISAR TICKET</div>
             <div class="tickets-wrap">
                 <div>
-                    <div class="ticket-box" id="tkt-emp"></div>
+                    <div class="ticket-box">
+                        <div class="ticket-label tl-emp">📋 COPIA EMPLEADO</div>
+                        <div class="tkt-tit">🍦 DAJANA HELADOS</div>
+                        <div class="tkt-num">Venta del día #3</div>
+                        <div class="tkt-row"><span>Empleado:</span><span>Juan</span></div>
+                        <div class="tkt-row"><span>Fecha:</span><span>01/04/2026</span></div>
+                        <div class="tkt-item">
+                            <div class="tkt-item-n">Pote 1/4 kg x1 — $2.500</div>
+                            <div class="tkt-item-s">🍦 Dulce de leche</div>
+                        </div>
+                        <div class="tkt-total">TOTAL: $2.500</div>
+                        <div class="tkt-row" style="margin-top:5px;"><span>Pago:</span><span>Transferencia</span></div>
+                    </div>
                 </div>
                 <div>
-                    <div class="ticket-box" id="tkt-cli"></div>
+                    <div class="ticket-box">
+                        <div class="ticket-label tl-cli">🛒 TICKET CLIENTE</div>
+                        <div class="tkt-tit">🍦 DAJANA HELADOS</div>
+                        <div class="tkt-num">Orden #3</div>
+                        <div class="tkt-row"><span>Fecha:</span><span>01/04/2026</span></div>
+                        <div class="tkt-item">
+                            <div class="tkt-item-n">Pote 1/4 kg x1 — $2.500</div>
+                            <div class="tkt-item-s">🍦 Dulce de leche</div>
+                        </div>
+                        <div class="tkt-total">TOTAL: $2.500</div>
+                        <div class="tkt-row" style="margin-top:5px;"><span>Pago:</span><span>Transferencia</span></div>
+                    </div>
                 </div>
             </div>
             <div class="ticket-actions">
-                <button class="btn btn-g btn-confirm" onclick="confirmarVenta()">✅ CONFIRMAR Y REGISTRAR</button>
-                <button class="btn btn-r" onclick="cancelarTicket()">🗑 CANCELAR VENTA</button>
+                <a class="btn btn-g btn-confirm" href="#s-conf">✅ CONFIRMAR Y REGISTRAR</a>
+                <a class="btn btn-r" href="#s-emp">🗑 CANCELAR VENTA</a>
             </div>
         </div>
     </div>
 
-    <!-- CONFIRMACION -->
     <div id="s-conf" class="pantalla">
         <div class="header">
             <div class="logo">
                 <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
                 <div class="logo-s">helados</div>
             </div>
-            <div class="h-rol h-rol-conf">EMPLEADO</div>
+            <div class="h-btns">
+                <div class="h-rol" style="color:var(--dorado-light);">EMPLEADO</div>
+            </div>
         </div>
         <div class="contenido">
             <div class="conf-card">
                 <div class="conf-ico">✅</div>
                 <div class="conf-tit">¡VENTA REGISTRADA!</div>
-                <div class="conf-det">Venta <strong id="cf-num"></strong></div>
-                <div class="conf-det">Total: <strong id="cf-total"></strong></div>
-                <div class="conf-det">Pago: <strong id="cf-pago"></strong></div>
+                <div class="conf-det">Venta <strong>#3 del día</strong></div>
+                <div class="conf-det">Total: <strong>$2.500</strong></div>
+                <div class="conf-det">Pago: <strong>Transferencia</strong></div>
                 <div class="conf-btns">
-                    <button class="btn btn-g" onclick="nuevaVenta()">NUEVA VENTA</button>
-                    <button class="btn btn-s" onclick="irA('s-emp')">VOLVER</button>
+                    <a class="btn btn-g" href="#s-venta">NUEVA VENTA</a>
+                    <a class="btn btn-s" href="#s-emp">VOLVER</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- HISTORIAL (misma estructura que admin; setupHist filtra “mis ventas”) -->
     <div id="s-historial" class="pantalla">
         <div class="header">
             <div class="logo">
@@ -131,16 +205,16 @@
                 <div class="logo-s">helados</div>
             </div>
             <div class="h-btns">
-                <div class="h-rol" id="hist-rol">EMPLEADO</div>
-                <button class="btn btn-v" onclick="volverHist()">VOLVER</button>
+                <div class="h-rol">EMPLEADO</div>
+                <a class="btn btn-v" href="#s-emp">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title" id="hist-tit">MIS VENTAS</div>
+            <div class="page-title">MIS VENTAS</div>
             <div class="frow">
-                <input class="buscador" id="ht" type="text" placeholder="🔍 Buscar en mis ventas...">
-                <input class="buscador maxw-175" id="hf" type="date">
-                <button class="btn btn-s btn-clean" onclick="limpFilt()">✕ LIMPIAR</button>
+                <input class="buscador" type="text" placeholder="🔍 Buscar en mis ventas...">
+                <input class="buscador maxw-175" type="date">
+                <button class="btn btn-s btn-clean">✕ LIMPIAR</button>
             </div>
             <div class="tw-d">
                 <table>
@@ -155,131 +229,77 @@
                             <th>ELIM.</th>
                         </tr>
                     </thead>
-                    <tbody id="hist-tb"></tbody>
+                    <tbody>
+                        <tr>
+                            <td><strong>#1</strong></td>
+                            <td>25/03/2026</td>
+                            <td>$5.800</td>
+                            <td>Efectivo</td>
+                            <td>Juan</td>
+                            <td><a class="ib" href="#s-detalle1">👁️</a></td>
+                            <td><button class="ib">🗑️</button></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- DETALLE -->
-    <div id="s-detalle" class="pantalla">
+    <div id="s-detalle1" class="pantalla">
         <div class="header">
             <div class="logo">
                 <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
                 <div class="logo-s">helados</div>
             </div>
             <div class="h-btns">
-                <div class="h-rol" id="det-rol">EMPLEADO</div>
-                <button class="btn btn-v" onclick="irA('s-historial')">VOLVER</button>
+                <div class="h-rol">EMPLEADO</div>
+                <a class="btn btn-v" href="#s-historial">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
             <div class="page-title">DETALLE DE VENTA</div>
-            <div class="det-card" id="det-cont"></div>
-        </div>
-    </div>
-
-    <!-- GESTIÓN DE CATEGORÍAS/TIPOS -->
-    <div class="modal-overlay" id="m-cats">
-        <div class="modal-box">
-            <div class="m-tit" id="m-cats-tit">EDITAR SECCIONES</div>
-            <input type="hidden" id="m-cats-modo">
-            <p class="m-help">Hacé clic en ✕ para eliminar. Escribí abajo para agregar una nueva.</p>
-            <div class="cat-list" id="m-cats-list"></div>
-            <div class="m-cats-row">
-                <input class="buscador m-cats-input" id="m-cats-nueva" type="text" placeholder="Nueva sección...">
-                <button class="btn btn-g m-cats-add" onclick="agregarCat()">＋</button>
-            </div>
-            <div class="err" id="m-cats-err"></div>
-            <div class="fbtns mt-14">
-                <button class="btn btn-g" onclick="guardarCats()">GUARDAR</button>
-                <button class="btn btn-s" onclick="cerrarModal('m-cats')">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SABOR -->
-    <div class="modal-overlay" id="m-sabor">
-        <div class="modal-box">
-            <div class="m-tit" id="m-sab-tit">AGREGAR SABOR</div>
-            <input type="hidden" id="ms-id">
-            <div class="fg"><label>NOMBRE</label><input id="ms-nombre" type="text" placeholder="Ej: Chocolate amargo">
-            </div>
-            <div class="fg"><label>CATEGORÍA</label><select id="ms-cat"></select></div>
-            <div class="fg"><label>PRECIO POR LITRO ($)</label><input id="ms-precio" type="number" min="0"
-                    placeholder="2500"></div>
-            <div class="fg"><label>STOCK (litros)</label><input id="ms-stock" type="number" min="0" step="0.5"
-                    placeholder="10"></div>
-            <div class="fbtns">
-                <button class="btn btn-g" onclick="guardarSabor()">GUARDAR</button>
-                <button class="btn btn-s" onclick="cerrarModal('m-sabor')">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ACCESORIO -->
-    <div class="modal-overlay" id="m-acc">
-        <div class="modal-box">
-            <div class="m-tit" id="m-acc-tit">AGREGAR ACCESORIO</div>
-            <input type="hidden" id="ma-id">
-            <div class="fg"><label>NOMBRE</label><input id="ma-nombre" type="text" placeholder="Ej: Cucurucho mediano">
-            </div>
-            <div class="fg"><label>TIPO</label><select id="ma-tipo"></select></div>
-            <div class="fg"><label>PRECIO UNITARIO ($)</label><input id="ma-precio" type="number" min="0"
-                    placeholder="800"></div>
-            <div class="fg"><label>STOCK</label><input id="ma-stock" type="number" min="0" step="1" placeholder="50">
-            </div>
-            <div class="fg">
-                <label>UNIDAD DE MEDIDA</label>
-                <select id="ma-unidad">
-                    <option value="unidades">unidades</option>
-                    <option value="cajas">cajas</option>
-                    <option value="kg">kg</option>
-                </select>
-            </div>
-            <div class="fbtns">
-                <button class="btn btn-g" onclick="guardarAccesorio()">GUARDAR</button>
-                <button class="btn btn-s" onclick="cerrarModal('m-acc')">CANCELAR</button>
+            <div class="det-card">
+                <div class="det-info">Venta del día <span>#1</span></div>
+                <div class="det-info">Fecha: <span>25/03/2026</span></div>
+                <div class="det-info">Empleado: <span>Juan</span></div>
+                <div class="tw" style="margin:12px 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;">PRODUCTO</th>
+                                <th>CANT.</th>
+                                <th>PRECIO</th>
+                                <th>SUBTOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align:left;padding:8px 9px;">
+                                    Pote 1/4 kg<br>
+                                    <small style="color:#888;font-style:italic;">Chocolate · Vainilla</small>
+                                </td>
+                                <td>1</td>
+                                <td>$2.500</td>
+                                <td>$2.500</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left;padding:8px 9px;">
+                                    Cucurucho<br>
+                                    <small style="color:#888;font-style:italic;">Dulce de leche</small>
+                                </td>
+                                <td>2</td>
+                                <td>$800</td>
+                                <td>$1.600</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="det-info" style="font-size:1rem;">Total: <span>$5.800</span></div>
+                <div class="det-info">Pago: <span>Efectivo</span></div>
             </div>
         </div>
     </div>
 
-    <!-- EDITAR STOCK -->
-    <div class="modal-overlay" id="m-stock">
-        <div class="modal-box">
-            <div class="m-tit">EDITAR STOCK</div>
-            <input type="hidden" id="mst-id">
-            <input type="hidden" id="mst-tipo">
-            <div class="fg"><label>PRODUCTO</label><input id="mst-nombre" readonly class="readonly-input"></div>
-            <div class="fg"><label id="mst-ulbl">NUEVO STOCK</label><input id="mst-val" type="number" min="0"
-                    step="0.5"></div>
-            <div class="fbtns">
-                <button class="btn btn-g" onclick="guardarStock()">GUARDAR</button>
-                <button class="btn btn-s" onclick="cerrarModal('m-stock')">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CONFIRMAR ELIMINAR -->
-    <div class="modal-overlay" id="m-confirm">
-        <div class="modal-box modal-center">
-            <div class="m-tit">⚠️ CONFIRMAR</div>
-            <p class="m-conf-text" id="m-conf-msg">¿Estás seguro?</p>
-            <div class="fbtns">
-                <button class="btn btn-r" id="m-conf-ok">ELIMINAR</button>
-                <button class="btn btn-s" onclick="cerrarModal('m-confirm')">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/state.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/historial.js"></script>
-    <script src="js/admin.js"></script>
-    <script src="js/empleado.js"></script>
-    <script src="js/nav.js"></script>
-    <script src="js/main.js"></script>
 </body>
 
 </html>

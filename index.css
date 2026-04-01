@@ -1,0 +1,161 @@
+:root {
+    --granate: #7a1020;
+    --granate-dark: #5a0a16;
+    --lavanda: #e8d5f0;
+    --salmon: #f5a898;
+    --salmon-light: #f9c4bc;
+    --dorado: #f5c842;
+    --dorado-light: #f9d96a;
+    --texto: #1a0a0a;
+    --blanco: #fff;
+    --rojo: #e53935;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--lavanda);
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.lg-hd {
+    background: var(--granate);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.lg-n img {
+    height: 5rem;
+    width: auto;
+}
+
+.lg-s {
+    font-size: .82rem;
+    color: var(--salmon-light);
+    letter-spacing: 6px;
+}
+
+/* Cuerpo del Login */
+.lg-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 34px 20px;
+    gap: 16px;
+}
+
+.lg-tit {
+    background: var(--dorado);
+    color: var(--texto);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    padding: 12px 54px;
+    border-radius: 30px;
+}
+
+.lg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Campos de entrada */
+.col-stack-7 {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.c-lbl {
+    background: var(--granate);
+    color: var(--blanco);
+    font-family: 'Fredoka One', cursive;
+    font-size: .88rem;
+    letter-spacing: 2px;
+    padding: 8px 20px;
+    border-radius: 30px;
+    display: inline-block;
+}
+
+.c-inp {
+    background: var(--salmon-light);
+    border: none;
+    border-radius: 30px;
+    padding: 13px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--texto);
+    width: 100%;
+    outline: none;
+}
+
+.c-inp::placeholder {
+    color: rgba(26, 10, 10, .45);
+}
+
+.c-inp:focus {
+    background: var(--salmon);
+}
+
+/* Errores y Utilidades */
+.err {
+    color: var(--rojo);
+    font-weight: 700;
+    font-size: .82rem;
+    text-align: center;
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.mt-6 {
+    margin-top: 6px;
+}
+
+/* Botón */
+.btn-login {
+    background: var(--dorado);
+    color: var(--texto);
+    border: none;
+    border-radius: 30px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .98rem;
+    padding: 12px 44px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+}
+
+.login-hints {
+    font-size: .72rem;
+    color: var(--granate);
+    font-weight: 700;
+    margin-top: 2px;
+    text-align: center;
+}
