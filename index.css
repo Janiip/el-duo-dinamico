@@ -27,7 +27,7 @@ body {
 }
 
 /* Header */
-.lg-hd {
+.encabezado-login {
     background: var(--granate);
     padding: 30px;
     display: flex;
@@ -36,19 +36,19 @@ body {
     gap: 4px;
 }
 
-.lg-n img {
+.logo-nombre img {
     height: 5rem;
     width: auto;
 }
 
-.lg-s {
+.logo-subtitulo {
     font-size: .82rem;
     color: var(--salmon-light);
     letter-spacing: 6px;
 }
 
 /* Cuerpo del Login */
-.lg-body {
+.cuerpo-login {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@ body {
     gap: 16px;
 }
 
-.lg-tit {
+.titulo-login {
     background: var(--dorado);
     color: var(--texto);
     font-family: 'Fredoka One', cursive;
@@ -67,7 +67,7 @@ body {
     border-radius: 30px;
 }
 
-.lg-form {
+.formulario-login {
     display: flex;
     flex-direction: column;
     gap: 13px;
@@ -76,13 +76,13 @@ body {
 }
 
 /* Campos de entrada */
-.col-stack-7 {
+.columna-apilada-7 {
     display: flex;
     flex-direction: column;
     gap: 7px;
 }
 
-.c-lbl {
+.etiqueta-personalizada {
     background: var(--granate);
     color: var(--blanco);
     font-family: 'Fredoka One', cursive;
@@ -93,7 +93,7 @@ body {
     display: inline-block;
 }
 
-.c-inp {
+.entrada-personalizada {
     background: var(--salmon-light);
     border: none;
     border-radius: 30px;
@@ -106,16 +106,16 @@ body {
     outline: none;
 }
 
-.c-inp::placeholder {
+.entrada-personalizada::placeholder {
     color: rgba(26, 10, 10, .45);
 }
 
-.c-inp:focus {
+.entrada-personalizada:focus {
     background: var(--salmon);
 }
 
 /* Errores y Utilidades */
-.err {
+.error {
     color: var(--rojo);
     font-weight: 700;
     font-size: .82rem;
@@ -123,16 +123,16 @@ body {
     display: none;
 }
 
-.center {
+.centrado {
     text-align: center;
 }
 
-.mt-6 {
+.margen-superior-6 {
     margin-top: 6px;
 }
 
 /* Botón */
-.btn-login {
+.boton-iniciar-sesion {
     background: var(--dorado);
     color: var(--texto);
     border: none;
@@ -147,12 +147,12 @@ body {
     transition: transform .15s, box-shadow .15s;
 }
 
-.btn-login:hover {
+.boton-iniciar-sesion:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
 }
 
-.login-hints {
+.pistas-login {
     font-size: .72rem;
     color: var(--granate);
     font-weight: 700;

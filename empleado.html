@@ -13,50 +13,50 @@
 <body>
 
     <div id="s-emp" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">EMPLEADO</div>
-                <a class="btn btn-d" href="index.html">CERRAR SESIÓN</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">EMPLEADO</div>
+                <a class="boton boton-cerrar" href="index.html">CERRAR SESIÓN</a>
             </div>
         </div>
-        <div class="emp-home">
-            <div class="emp-bv">¡Bienvenida/o! 🍦</div>
-            <div class="emp-btns">
-                <a class="emp-btn emp-btn-main" href="#s-venta">🍦 REGISTRAR VENTA</a>
-                <a class="emp-btn emp-btn-sec" href="#s-historial">📋 MIS VENTAS</a>
+        <div class="inicio-empleado">
+            <div class="bienvenida-empleado">¡Bienvenida/o! 🍦</div>
+            <div class="botones-empleado">
+                <a class="boton-empleado boton-empleado-principal" href="#s-venta">🍦 REGISTRAR VENTA</a>
+                <a class="boton-empleado boton-empleado-secundario" href="#s-historial">📋 MIS VENTAS</a>
             </div>
         </div>
     </div>
 
     <div id="s-venta" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">EMPLEADO</div>
-                <a class="btn btn-v" href="#s-emp">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">EMPLEADO</div>
+                <a class="boton boton-volver" href="#s-emp">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
             <div class="barra">
-                <div class="page-title flex-1 no-mb">REGISTRAR VENTA</div>
+                <div class="titulo-pagina flex-1 no-mb">REGISTRAR VENTA</div>
             </div>
 
             <div class="carrito">
-                <div class="item-v">
-                    <div class="item-hd">
-                        <div class="item-num">PRODUCTO 1</div>
-                        <div class="item-sub">$0</div>
+                <div class="item-venta">
+                    <div class="encabezado-item">
+                        <div class="numero-item">PRODUCTO 1</div>
+                        <div class="subtotal-item">$0</div>
                     </div>
-                    <div class="v-fila">
-                        <div class="v-lbl">PRODUCTO</div>
-                        <select class="v-inp">
+                    <div class="fila-venta">
+                        <div class="etiqueta-venta">PRODUCTO</div>
+                        <select class="entrada-venta">
                             <option value="">SELECCIONAR</option>
                             <option>Pote 1/4 kg — $2.500</option>
                             <option>Pote 1/2 kg — $4.500</option>
@@ -68,155 +68,155 @@
                             <option>Toppings variados — $500</option>
                         </select>
                     </div>
-                    <div class="sab-wrap">
-                        <div class="sab-tit">🍦 ELEGIR SABOR/ES</div>
-                        <div class="sab-cat-tabs">
-                            <span class="chip">Chocolates</span>
-                            <span class="chip">Dulces de leche</span>
-                            <span class="chip">Frutas al agua</span>
-                            <span class="chip">Frutas a la crema</span>
-                            <span class="chip">Cremas</span>
-                            <span class="chip">Cremas especiales</span>
+                    <div class="envoltorio-sabores">
+                        <div class="titulo-sabores">🍦 ELEGIR SABOR/ES</div>
+                        <div class="pestanas-categoria-sabores">
+                            <span class="ficha">Chocolates</span>
+                            <span class="ficha">Dulces de leche</span>
+                            <span class="ficha">Frutas al agua</span>
+                            <span class="ficha">Frutas a la crema</span>
+                            <span class="ficha">Cremas</span>
+                            <span class="ficha">Cremas especiales</span>
                         </div>
                         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;">
-                            <span class="chip">Chocolate</span>
-                            <span class="chip sel">Dulce de leche</span>
-                            <span class="chip">Chocolate amargo</span>
-                            <span class="chip agotado">Maracuyá ✗</span>
-                            <span class="chip">Frutilla</span>
-                            <span class="chip">Vainilla</span>
+                            <span class="ficha">Chocolate</span>
+                            <span class="ficha seleccionado">Dulce de leche</span>
+                            <span class="ficha">Chocolate amargo</span>
+                            <span class="ficha agotado">Maracuyá ✗</span>
+                            <span class="ficha">Frutilla</span>
+                            <span class="ficha">Vainilla</span>
                         </div>
                         <div style="font-size:.73rem;color:var(--granate);font-weight:700;margin-top:6px;">
                             ✅ Dulce de leche
                         </div>
                     </div>
-                    <div class="v-fila" style="margin-top:8px;">
-                        <div class="v-lbl">CANTIDAD</div>
-                        <input class="v-inp" type="number" min="1" value="1">
+                    <div class="fila-venta" style="margin-top:8px;">
+                        <div class="etiqueta-venta">CANTIDAD</div>
+                        <input class="entrada-venta" type="number" min="1" value="1">
                     </div>
-                    <div class="v-fila">
-                        <div class="v-lbl">PRECIO UNIT.</div>
-                        <input class="v-inp" readonly value="—">
+                    <div class="fila-venta">
+                        <div class="etiqueta-venta">PRECIO UNIT.</div>
+                        <input class="entrada-venta" readonly value="—">
                     </div>
                 </div>
             </div>
 
-            <div class="carrito-add-wrap">
-                <button class="btn btn-s btn-add-item">＋ AGREGAR PRODUCTO</button>
+            <div class="envoltorio-agregar-carrito">
+                <button class="boton boton-secundario boton-agregar-item">＋ AGREGAR PRODUCTO</button>
             </div>
 
-            <div class="total-box">TOTAL: <span>$0</span></div>
+            <div class="caja-total">TOTAL: <span>$0</span></div>
 
-            <div class="pago-box">
-                <div class="pago-tit">MÉTODO DE PAGO</div>
-                <div class="pago-ops">
-                    <div class="p-op">EFECTIVO</div>
-                    <div class="p-op" style="border-color:var(--granate);background:var(--salmon);">TRANSFERENCIA</div>
+            <div class="caja-pago">
+                <div class="titulo-pago">MÉTODO DE PAGO</div>
+                <div class="opciones-pago">
+                    <div class="opcion-pago">EFECTIVO</div>
+                    <div class="opcion-pago" style="border-color:var(--granate);background:var(--salmon);">TRANSFERENCIA</div>
                 </div>
             </div>
 
-            <div class="venta-btns">
-                <a class="btn btn-g btn-confirm" href="#s-ticket">VER TICKET →</a>
-                <a class="btn btn-s" href="#s-emp">CANCELAR</a>
+            <div class="botones-venta">
+                <a class="boton boton-agregar boton-confirmar" href="#s-ticket">VER TICKET →</a>
+                <a class="boton boton-secundario" href="#s-emp">CANCELAR</a>
             </div>
         </div>
     </div>
 
     <div id="s-ticket" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">EMPLEADO</div>
-                <a class="btn btn-v" href="#s-venta">✏️ EDITAR</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">EMPLEADO</div>
+                <a class="boton boton-volver" href="#s-venta">✏️ EDITAR</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">REVISAR TICKET</div>
-            <div class="tickets-wrap">
+            <div class="titulo-pagina">REVISAR TICKET</div>
+            <div class="envoltorio-tickets">
                 <div>
-                    <div class="ticket-box">
-                        <div class="ticket-label tl-emp">📋 COPIA EMPLEADO</div>
-                        <div class="tkt-tit">🍦 DAJANA HELADOS</div>
-                        <div class="tkt-num">Venta del día #3</div>
-                        <div class="tkt-row"><span>Empleado:</span><span>Juan</span></div>
-                        <div class="tkt-row"><span>Fecha:</span><span>01/04/2026</span></div>
-                        <div class="tkt-item">
-                            <div class="tkt-item-n">Pote 1/4 kg x1 — $2.500</div>
-                            <div class="tkt-item-s">🍦 Dulce de leche</div>
+                    <div class="caja-ticket">
+                        <div class="etiqueta-ticket etiqueta-empleado">📋 COPIA EMPLEADO</div>
+                        <div class="titulo-ticket">🍦 DAJANA HELADOS</div>
+                        <div class="numero-ticket">Venta del día #3</div>
+                        <div class="fila-ticket"><span>Empleado:</span><span>Juan</span></div>
+                        <div class="fila-ticket"><span>Fecha:</span><span>01/04/2026</span></div>
+                        <div class="item-ticket">
+                            <div class="nombre-item-ticket">Pote 1/4 kg x1 — $2.500</div>
+                            <div class="sabores-item-ticket">🍦 Dulce de leche</div>
                         </div>
-                        <div class="tkt-total">TOTAL: $2.500</div>
-                        <div class="tkt-row" style="margin-top:5px;"><span>Pago:</span><span>Transferencia</span></div>
+                        <div class="total-ticket">TOTAL: $2.500</div>
+                        <div class="fila-ticket" style="margin-top:5px;"><span>Pago:</span><span>Transferencia</span></div>
                     </div>
                 </div>
                 <div>
-                    <div class="ticket-box">
-                        <div class="ticket-label tl-cli">🛒 TICKET CLIENTE</div>
-                        <div class="tkt-tit">🍦 DAJANA HELADOS</div>
-                        <div class="tkt-num">Orden #3</div>
-                        <div class="tkt-row"><span>Fecha:</span><span>01/04/2026</span></div>
-                        <div class="tkt-item">
-                            <div class="tkt-item-n">Pote 1/4 kg x1 — $2.500</div>
-                            <div class="tkt-item-s">🍦 Dulce de leche</div>
+                    <div class="caja-ticket">
+                        <div class="etiqueta-ticket etiqueta-cliente">🛒 TICKET CLIENTE</div>
+                        <div class="titulo-ticket">🍦 DAJANA HELADOS</div>
+                        <div class="numero-ticket">Orden #3</div>
+                        <div class="fila-ticket"><span>Fecha:</span><span>01/04/2026</span></div>
+                        <div class="item-ticket">
+                            <div class="nombre-item-ticket">Pote 1/4 kg x1 — $2.500</div>
+                            <div class="sabores-item-ticket">🍦 Dulce de leche</div>
                         </div>
-                        <div class="tkt-total">TOTAL: $2.500</div>
-                        <div class="tkt-row" style="margin-top:5px;"><span>Pago:</span><span>Transferencia</span></div>
+                        <div class="total-ticket">TOTAL: $2.500</div>
+                        <div class="fila-ticket" style="margin-top:5px;"><span>Pago:</span><span>Transferencia</span></div>
                     </div>
                 </div>
             </div>
-            <div class="ticket-actions">
-                <a class="btn btn-g btn-confirm" href="#s-conf">✅ CONFIRMAR Y REGISTRAR</a>
-                <a class="btn btn-r" href="#s-emp">🗑 CANCELAR VENTA</a>
+            <div class="acciones-ticket">
+                <a class="boton boton-agregar boton-confirmar" href="#s-conf">✅ CONFIRMAR Y REGISTRAR</a>
+                <a class="boton boton-rojo" href="#s-emp">🗑 CANCELAR VENTA</a>
             </div>
         </div>
     </div>
 
     <div id="s-conf" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol" style="color:var(--dorado-light);">EMPLEADO</div>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado" style="color:var(--dorado-light);">EMPLEADO</div>
             </div>
         </div>
         <div class="contenido">
-            <div class="conf-card">
-                <div class="conf-ico">✅</div>
-                <div class="conf-tit">¡VENTA REGISTRADA!</div>
-                <div class="conf-det">Venta <strong>#3 del día</strong></div>
-                <div class="conf-det">Total: <strong>$2.500</strong></div>
-                <div class="conf-det">Pago: <strong>Transferencia</strong></div>
-                <div class="conf-btns">
-                    <a class="btn btn-g" href="#s-venta">NUEVA VENTA</a>
-                    <a class="btn btn-s" href="#s-emp">VOLVER</a>
+            <div class="tarjeta-confirmacion">
+                <div class="icono-confirmacion">✅</div>
+                <div class="titulo-confirmacion">¡VENTA REGISTRADA!</div>
+                <div class="detalle-confirmacion">Venta <strong>#3 del día</strong></div>
+                <div class="detalle-confirmacion">Total: <strong>$2.500</strong></div>
+                <div class="detalle-confirmacion">Pago: <strong>Transferencia</strong></div>
+                <div class="botones-confirmacion">
+                    <a class="boton boton-agregar" href="#s-venta">NUEVA VENTA</a>
+                    <a class="boton boton-secundario" href="#s-emp">VOLVER</a>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="s-historial" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">EMPLEADO</div>
-                <a class="btn btn-v" href="#s-emp">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">EMPLEADO</div>
+                <a class="boton boton-volver" href="#s-emp">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">MIS VENTAS</div>
-            <div class="frow">
+            <div class="titulo-pagina">MIS VENTAS</div>
+            <div class="fila-flexible">
                 <input class="buscador" type="text" placeholder="🔍 Buscar en mis ventas...">
                 <input class="buscador maxw-175" type="date">
-                <button class="btn btn-s btn-clean">✕ LIMPIAR</button>
+                <button class="boton boton-secundario boton-limpiar">✕ LIMPIAR</button>
             </div>
-            <div class="tw-d">
+            <div class="envoltorio-tabla-oscuro">
                 <table>
                     <thead>
                         <tr>
@@ -236,8 +236,8 @@
                             <td>$5.800</td>
                             <td>Efectivo</td>
                             <td>Juan</td>
-                            <td><a class="ib" href="#s-detalle1">👁️</a></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><a class="boton-en-linea" href="#s-detalle1">👁️</a></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -246,23 +246,23 @@
     </div>
 
     <div id="s-detalle1" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">EMPLEADO</div>
-                <a class="btn btn-v" href="#s-historial">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">EMPLEADO</div>
+                <a class="boton boton-volver" href="#s-historial">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">DETALLE DE VENTA</div>
-            <div class="det-card">
-                <div class="det-info">Venta del día <span>#1</span></div>
-                <div class="det-info">Fecha: <span>25/03/2026</span></div>
-                <div class="det-info">Empleado: <span>Juan</span></div>
-                <div class="tw" style="margin:12px 0;">
+            <div class="titulo-pagina">DETALLE DE VENTA</div>
+            <div class="tarjeta-detalle">
+                <div class="informacion-detalle">Venta del día <span>#1</span></div>
+                <div class="informacion-detalle">Fecha: <span>25/03/2026</span></div>
+                <div class="informacion-detalle">Empleado: <span>Juan</span></div>
+                <div class="envoltorio-tabla" style="margin:12px 0;">
                     <table>
                         <thead>
                             <tr>
@@ -294,8 +294,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="det-info" style="font-size:1rem;">Total: <span>$5.800</span></div>
-                <div class="det-info">Pago: <span>Efectivo</span></div>
+                <div class="informacion-detalle" style="font-size:1rem;">Total: <span>$5.800</span></div>
+                <div class="informacion-detalle">Pago: <span>Efectivo</span></div>
             </div>
         </div>
     </div>

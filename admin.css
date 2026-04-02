@@ -38,7 +38,7 @@ body:not(:has(.pantalla:target)) #s-panel {
 }
 
 /* ── HEADER ── */
-.header {
+.encabezado {
     background: var(--granate);
     padding: 13px 24px;
     display: flex;
@@ -53,26 +53,26 @@ body:not(:has(.pantalla:target)) #s-panel {
     flex-direction: column;
 }
 
-.logo-n img {
+.logo-nombre img {
     height: 3rem;
     width: auto;
 }
 
-.logo-s {
+.logo-subtitulo {
     font-size: .65rem;
     color: var(--salmon-light);
     letter-spacing: 4px;
     text-align: center;
 }
 
-.h-rol {
+.rol-encabezado {
     font-family: 'Fredoka One', cursive;
     font-size: .9rem;
     color: var(--dorado-light);
     letter-spacing: 1px;
 }
 
-.h-btns {
+.botones-encabezado {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -80,7 +80,7 @@ body:not(:has(.pantalla:target)) #s-panel {
 }
 
 /* ── BOTONES ── */
-.btn {
+.boton {
     padding: 9px 20px;
     border: none;
     border-radius: 30px;
@@ -95,44 +95,54 @@ body:not(:has(.pantalla:target)) #s-panel {
     display: inline-block;
 }
 
-.btn:hover {
+.boton:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
 }
 
-.btn:active {
+.boton:active {
     transform: translateY(0);
 }
 
-.btn-d {
+.boton-dorado {
     background: var(--dorado);
     color: var(--texto);
 }
 
-.btn-g {
+.boton-granate {
     background: var(--granate);
     color: var(--blanco);
 }
 
-.btn-s {
+.boton-salmon {
     background: var(--salmon-light);
     color: var(--texto);
 }
 
-.btn-r {
+.boton-rojo {
     background: var(--rojo);
     color: var(--blanco);
 }
 
-.btn-v {
+.boton-volver {
     background: var(--dorado);
     color: var(--texto);
     font-size: .76rem;
     padding: 7px 16px;
 }
 
-.btn-small {
+.boton-pequeno {
     font-size: .76rem;
+}
+
+.boton-ventas {
+    background: var(--dorado);
+    color: var(--texto);
+}
+
+.boton-cerrar {
+    background: var(--rojo);
+    color: var(--blanco);
 }
 
 /* ── CONTENIDO ── */
@@ -142,7 +152,7 @@ body:not(:has(.pantalla:target)) #s-panel {
 }
 
 /* ── NAV TABS ── */
-.nav-tabs {
+.pestanas-navegacion {
     background: var(--salmon-light);
     border-radius: 14px;
     padding: 11px 13px;
@@ -152,7 +162,7 @@ body:not(:has(.pantalla:target)) #s-panel {
     margin-bottom: 18px;
 }
 
-.nav-tab {
+.pestana-navegacion {
     background: var(--granate);
     color: var(--blanco);
     font-family: 'Fredoka One', cursive;
@@ -167,19 +177,19 @@ body:not(:has(.pantalla:target)) #s-panel {
     display: inline-block;
 }
 
-.nav-tab:hover {
+.pestana-navegacion:hover {
     background: var(--granate-dark);
     transform: translateY(-2px);
 }
 
 /* ── PANEL ── */
-.panel-card {
+.tarjeta-panel {
     background: var(--salmon-light);
     border-radius: 18px;
     padding: 20px;
 }
 
-.p-tit {
+.titulo-panel {
     background: var(--granate);
     color: var(--blanco);
     font-family: 'Fredoka One', cursive;
@@ -191,7 +201,7 @@ body:not(:has(.pantalla:target)) #s-panel {
     margin-bottom: 16px;
 }
 
-.stat {
+.estadistica {
     background: var(--lavanda);
     border-radius: 10px;
     padding: 10px 16px;
@@ -199,20 +209,20 @@ body:not(:has(.pantalla:target)) #s-panel {
     margin-bottom: 8px;
 }
 
-.stat span {
+.estadistica span {
     color: var(--granate);
     font-weight: 800;
 }
 
 /* ── TABLAS ── */
-.tw {
+.envoltorio-tabla {
     background: var(--salmon-light);
     border-radius: 18px;
     overflow: hidden;
     margin-top: 12px;
 }
 
-.tw-d {
+.envoltorio-tabla-oscuro {
     background: var(--dorado-light);
     border-radius: 18px;
     overflow: hidden;
@@ -251,7 +261,7 @@ tr:hover td {
 }
 
 /* ── BADGES ── */
-.badge {
+.insignia {
     display: inline-block;
     padding: 3px 10px;
     border-radius: 20px;
@@ -259,30 +269,30 @@ tr:hover td {
     font-weight: 800;
 }
 
-.b-ok {
+.insignia-ok {
     background: #c8f0c8;
     color: #2e7d32;
 }
 
-.b-low {
+.insignia-bajo {
     background: #ffe0b2;
     color: #e65100;
 }
 
-.b-no {
+.insignia-no {
     background: #ffcdd2;
     color: #b71c1c;
 }
 
 /* ── CAT TABS ── */
-.cat-tabs {
+.pestanas-categoria {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
     margin-bottom: 12px;
 }
 
-.cat-tab {
+.pestana-categoria {
     background: var(--lavanda);
     border: 2px solid transparent;
     border-radius: 20px;
@@ -298,14 +308,14 @@ tr:hover td {
     transition: all .15s;
 }
 
-.cat-tab.activo,
-.cat-tab:target {
+.pestana-categoria.activo,
+.pestana-categoria:target {
     background: var(--granate);
     color: var(--blanco);
 }
 
 /* ── PAGE TITLE / BARRA ── */
-.page-title {
+.titulo-pagina {
     font-family: 'Fredoka One', cursive;
     font-size: 1.35rem;
     color: var(--granate);
@@ -335,7 +345,7 @@ tr:hover td {
 }
 
 /* ── STOCK FILTROS ── */
-.stock-filtros {
+.filtros-stock {
     display: flex;
     gap: 8px;
     margin-bottom: 12px;
@@ -343,7 +353,7 @@ tr:hover td {
     align-items: center;
 }
 
-.stock-sel {
+.selector-stock {
     background: var(--lavanda);
     border: 2px solid var(--salmon);
     border-radius: 30px;
@@ -369,12 +379,12 @@ tr:hover td {
 }
 
 .buscador:focus,
-.stock-sel:focus {
+.selector-stock:focus {
     border-color: var(--granate);
 }
 
 /* ── HISTORIAL ── */
-.frow {
+.fila-flexible {
     display: flex;
     gap: 8px;
     margin-bottom: 13px;
@@ -385,13 +395,13 @@ tr:hover td {
     max-width: 175px;
 }
 
-.btn-clean {
+.boton-limpiar {
     padding: 7px 13px;
     font-size: .74rem;
 }
 
 /* ── DETALLE ── */
-.det-card {
+.tarjeta-detalle {
     background: var(--salmon-light);
     border-radius: 18px;
     padding: 22px;
@@ -399,18 +409,18 @@ tr:hover td {
     margin: 0 auto;
 }
 
-.det-info {
+.informacion-detalle {
     margin-bottom: 9px;
     font-weight: 700;
 }
 
-.det-info span {
+.informacion-detalle span {
     color: var(--granate);
     font-weight: 800;
 }
 
 /* ── ICON BUTTONS ── */
-.ib {
+.boton-en-linea {
     background: none;
     border: none;
     cursor: pointer;
@@ -420,23 +430,23 @@ tr:hover td {
     transition: background .15s;
 }
 
-.ib:hover {
+.boton-en-linea:hover {
     background: rgba(0, 0, 0, .08);
 }
 
 /* ── TABS DE STOCK (radio hack) ── */
-.stock-radio {
+.radio-stock {
     display: none;
 }
 
-.stock-tabs-wrap {
+.envoltorio-pestanas-stock {
     display: flex;
     gap: 6px;
     margin-bottom: 14px;
     flex-wrap: wrap;
 }
 
-.stock-tab-lbl {
+.etiqueta-pestana-stock {
     background: var(--lavanda);
     border: 2px solid transparent;
     border-radius: 20px;
@@ -450,13 +460,13 @@ tr:hover td {
     transition: all .15s;
 }
 
-#stk-tab-sab:checked~.stock-contenido .stock-tab-lbl[for="stk-tab-sab"],
-#stk-tab-acc:checked~.stock-contenido .stock-tab-lbl[for="stk-tab-acc"] {
+#stk-tab-sab:checked~.stock-contenido .etiqueta-pestana-stock[for="stk-tab-sab"],
+#stk-tab-acc:checked~.stock-contenido .etiqueta-pestana-stock[for="stk-tab-acc"] {
     background: var(--granate);
     color: var(--blanco);
 }
 
-.stk-sec {
+.seccion-stock {
     display: none;
 }
 
@@ -479,7 +489,7 @@ tr:hover td {
         padding: 7px 4px;
     }
 
-    .nav-tab {
+    .pestana-navegacion {
         font-size: .76rem;
         padding: 7px 11px;
     }

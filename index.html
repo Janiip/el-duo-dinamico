@@ -11,32 +11,29 @@
 </head>
 
 <body>
-    <div class="lg-hd">
-        <div class="lg-n"><img src="img/dajana-logo.png" alt="logo dajana"></div>
-        <div class="lg-s">h e l a d o s</div>
+    <div class="encabezado-login">
+        <div class="logo-nombre"><img src="img/dajana-logo.png" alt="logo dajana"></div>
+        <div class="logo-subtitulo">h e l a d o s</div>
     </div>
 
-    <div class="lg-body">
-        <div class="lg-tit">LOGIN</div>
-        <div class="lg-form">
-            <div class="col-stack-7">
-                <div class="c-lbl">USUARIO</div>
-                <input class="c-inp" id="inp-u" type="text" placeholder="INGRESE NOMBRE DE USUARIO">
+    <div class="cuerpo-login">
+        <div class="titulo-login">LOGIN</div>
+        <div class="formulario-login">
+            <div class="columna-apilada-7">
+                <div class="etiqueta-personalizada">USUARIO</div>
+                <input class="entrada-personalizada" id="inp-u" type="text" placeholder="INGRESE NOMBRE DE USUARIO">
             </div>
-            <div class="col-stack-7">
-                <div class="c-lbl">CONTRASEÑA</div>
-                <input class="c-inp" id="inp-p" type="password" placeholder="INGRESE CONTRASEÑA">
+            <div class="columna-apilada-7">
+                <div class="etiqueta-personalizada">CONTRASEÑA</div>
+                <input class="entrada-personalizada" id="inp-p" type="password" placeholder="INGRESE CONTRASEÑA">
             </div>
-            <div class="err" id="lg-err">Usuario o contraseña incorrectos</div>
-            <a href="admin.html" class="btn-login" style="text-decoration:none; display:inline-block;">INICIAR SESIÓN
-                (ADMIN)</a>
-            <a href="empleado.html" class="btn-login"
-                style="text-decoration:none; display:inline-block; background: var(--salmon);">INICIAR SESIÓN (EMP)</a>
+            <div class="error" id="error-login">Usuario o contraseña incorrectos</div>
+            
         </div>
-        <!-- <div class="center mt-6">
-                <button class="btn-login" onclick="login()">INICIAR SESIÓN</button>
-            </div> -->
-        <div class="login-hints">
+        <div class="centrado margen-superior-6">
+                <button class="boton-iniciar-sesion" onclick="login()">INICIAR SESIÓN</button>
+            </div>
+        <div class="pistas-login">
             👤 admin / admin &nbsp;|&nbsp; 👤 empleado / empleado &nbsp;|&nbsp; 👤 ana / ana
         </div>
     </div>
@@ -56,7 +53,7 @@
         function login() {
             const u = document.getElementById('inp-u').value.trim().toLowerCase();
             const p = document.getElementById('inp-p').value.trim();
-            const err = document.getElementById('lg-err');
+            const err = document.getElementById('error-login');
 
             const usr = USUARIOS.find(x => x.user === u && x.pass === p);
 

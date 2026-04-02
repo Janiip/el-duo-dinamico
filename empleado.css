@@ -40,7 +40,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── HEADER ── */
-.header {
+.encabezado {
     background: var(--granate);
     padding: 13px 24px;
     display: flex;
@@ -55,26 +55,26 @@ body:not(:has(.pantalla:target)) #s-emp {
     flex-direction: column;
 }
 
-.logo-n img {
+.logo-nombre img {
     height: 3rem;
     width: auto;
 }
 
-.logo-s {
+.logo-subtitulo {
     font-size: .65rem;
     color: var(--salmon-light);
     letter-spacing: 4px;
     text-align: center;
 }
 
-.h-rol {
+.rol-encabezado {
     font-family: 'Fredoka One', cursive;
     font-size: .9rem;
     color: var(--dorado-light);
     letter-spacing: 1px;
 }
 
-.h-btns {
+.botones-encabezado {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -82,7 +82,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── BOTONES ── */
-.btn {
+.boton {
     padding: 9px 20px;
     border: none;
     border-radius: 30px;
@@ -97,44 +97,54 @@ body:not(:has(.pantalla:target)) #s-emp {
     display: inline-block;
 }
 
-.btn:hover {
+.boton:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
 }
 
-.btn-d {
+.boton-dorado {
     background: var(--dorado);
     color: var(--texto);
 }
 
-.btn-g {
+.boton-granate {
     background: var(--granate);
     color: var(--blanco);
 }
 
-.btn-s {
+.boton-secundario {
     background: var(--salmon-light);
     color: var(--texto);
 }
 
-.btn-r {
+.boton-agregar {
+    background: var(--dorado);
+    color: var(--texto);
+}
+
+.boton-rojo {
     background: var(--rojo);
     color: var(--blanco);
 }
 
-.btn-v {
+.boton-cerrar {
+    background: var(--rojo);
+    color: var(--blanco);
+}
+
+.boton-volver {
     background: var(--dorado);
     color: var(--texto);
     font-size: .76rem;
     padding: 7px 16px;
 }
 
-.btn-clean {
+.boton-limpiar {
     padding: 7px 13px;
     font-size: .74rem;
 }
 
-.btn-confirm {
+.boton-confirmar {
     font-size: .93rem;
     padding: 12px 30px;
 }
@@ -146,7 +156,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── PAGE TITLE ── */
-.page-title {
+.titulo-pagina {
     font-family: 'Fredoka One', cursive;
     font-size: 1.35rem;
     color: var(--granate);
@@ -172,7 +182,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── EMPLEADO HOME ── */
-.emp-home {
+.inicio-empleado {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -182,21 +192,21 @@ body:not(:has(.pantalla:target)) #s-emp {
     padding: 34px;
 }
 
-.emp-bv {
+.bienvenida-empleado {
     font-family: 'Fredoka One', cursive;
     font-size: 1.65rem;
     color: var(--granate);
     text-align: center;
 }
 
-.emp-btns {
+.botones-empleado {
     display: flex;
     gap: 13px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-.emp-btn {
+.boton-empleado {
     font-family: 'Fredoka One', cursive;
     font-size: 1rem;
     letter-spacing: 2px;
@@ -210,17 +220,17 @@ body:not(:has(.pantalla:target)) #s-emp {
     display: inline-block;
 }
 
-.emp-btn:hover {
+.boton-empleado:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 18px rgba(122, 16, 32, .25);
 }
 
-.emp-btn-main {
+.boton-empleado-principal {
     background: var(--granate);
     color: var(--blanco);
 }
 
-.emp-btn-sec {
+.boton-empleado-secundario {
     background: var(--salmon);
     color: var(--texto);
 }
@@ -234,21 +244,21 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin: 0 auto;
 }
 
-.item-v {
+.item-venta {
     background: var(--blanco);
     border: 2px solid var(--salmon-light);
     border-radius: 16px;
     padding: 14px;
 }
 
-.item-hd {
+.encabezado-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
 }
 
-.item-num {
+.numero-item {
     background: var(--granate);
     color: var(--blanco);
     font-family: 'Fredoka One', cursive;
@@ -257,20 +267,20 @@ body:not(:has(.pantalla:target)) #s-emp {
     border-radius: 20px;
 }
 
-.item-sub {
+.subtotal-item {
     font-family: 'Fredoka One', cursive;
     color: var(--granate);
     font-size: .98rem;
 }
 
-.v-fila {
+.fila-venta {
     display: flex;
     align-items: center;
     gap: 9px;
     margin-bottom: 7px;
 }
 
-.v-lbl {
+.etiqueta-venta {
     background: var(--granate);
     color: var(--blanco);
     font-family: 'Fredoka One', cursive;
@@ -283,7 +293,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     flex-shrink: 0;
 }
 
-.v-inp {
+.entrada-venta {
     flex: 1;
     background: var(--dorado-light);
     border: none;
@@ -296,19 +306,19 @@ body:not(:has(.pantalla:target)) #s-emp {
     outline: none;
 }
 
-.v-inp:focus {
+.entrada-venta:focus {
     background: var(--dorado);
 }
 
 /* sabores */
-.sab-wrap {
+.envoltorio-sabores {
     background: var(--lavanda);
     border-radius: 12px;
     padding: 10px;
     margin-top: 6px;
 }
 
-.sab-tit {
+.titulo-sabores {
     font-family: 'Fredoka One', cursive;
     color: var(--granate);
     font-size: .78rem;
@@ -316,14 +326,14 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin-bottom: 7px;
 }
 
-.sab-cat-tabs {
+.pestanas-categoria-sabores {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
     margin-bottom: 7px;
 }
 
-.chip {
+.ficha {
     background: var(--dorado-light);
     border: 2px solid transparent;
     border-radius: 20px;
@@ -333,25 +343,25 @@ body:not(:has(.pantalla:target)) #s-emp {
     font-size: .76rem;
 }
 
-.chip.sel {
+.ficha.seleccionado {
     background: var(--granate);
     color: var(--blanco);
     border-color: var(--granate-dark);
 }
 
-.chip.agotado {
+.ficha.agotado {
     background: #e0e0e0;
     color: #aaa;
     text-decoration: line-through;
 }
 
 /* total / pago */
-.carrito-add-wrap {
+.envoltorio-agregar-carrito {
     max-width: 640px;
     margin: 11px auto 0;
 }
 
-.btn-add-item {
+.boton-agregar-item {
     width: 100%;
     padding: 11px;
     font-size: .86rem;
@@ -360,7 +370,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     cursor: pointer;
 }
 
-.total-box {
+.caja-total {
     background: var(--salmon-light);
     border-radius: 30px;
     padding: 13px;
@@ -373,7 +383,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin: 14px auto 0;
 }
 
-.pago-box {
+.caja-pago {
     background: var(--dorado-light);
     border-radius: 18px;
     padding: 16px;
@@ -384,7 +394,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin: 11px auto 0;
 }
 
-.pago-tit {
+.titulo-pago {
     background: var(--granate);
     color: var(--blanco);
     font-family: 'Fredoka One', cursive;
@@ -395,14 +405,14 @@ body:not(:has(.pantalla:target)) #s-emp {
     text-align: center;
 }
 
-.pago-ops {
+.opciones-pago {
     display: flex;
     gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.p-op {
+.opcion-pago {
     background: var(--salmon-light);
     border: 3px solid transparent;
     border-radius: 30px;
@@ -413,7 +423,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     cursor: pointer;
 }
 
-.venta-btns {
+.botones-venta {
     text-align: center;
     margin-top: 13px;
     display: flex;
@@ -423,7 +433,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── TICKET ── */
-.tickets-wrap {
+.envoltorio-tickets {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
@@ -432,19 +442,19 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 @media(max-width:620px) {
-    .tickets-wrap {
+    .envoltorio-tickets {
         grid-template-columns: 1fr;
     }
 }
 
-.ticket-box {
+.caja-ticket {
     background: var(--blanco);
     border: 2px dashed var(--granate);
     border-radius: 14px;
     padding: 18px;
 }
 
-.ticket-label {
+.etiqueta-ticket {
     font-family: 'Fredoka One', cursive;
     font-size: .72rem;
     letter-spacing: 2px;
@@ -454,17 +464,17 @@ body:not(:has(.pantalla:target)) #s-emp {
     display: inline-block;
 }
 
-.tl-emp {
+.etiqueta-empleado {
     background: var(--granate);
     color: var(--blanco);
 }
 
-.tl-cli {
+.etiqueta-cliente {
     background: var(--dorado);
     color: var(--texto);
 }
 
-.tkt-tit {
+.titulo-ticket {
     font-family: 'Fredoka One', cursive;
     color: var(--granate);
     text-align: center;
@@ -475,7 +485,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     border-bottom: 2px dashed var(--salmon-light);
 }
 
-.tkt-num {
+.numero-ticket {
     font-family: 'Fredoka One', cursive;
     font-size: .85rem;
     color: var(--granate);
@@ -483,7 +493,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin-bottom: 7px;
 }
 
-.tkt-row {
+.fila-ticket {
     display: flex;
     justify-content: space-between;
     padding: 4px 0;
@@ -492,11 +502,11 @@ body:not(:has(.pantalla:target)) #s-emp {
     font-weight: 700;
 }
 
-.tkt-row:last-child {
+.fila-ticket:last-child {
     border: none;
 }
 
-.tkt-total {
+.total-ticket {
     font-family: 'Fredoka One', cursive;
     font-size: 1.05rem;
     color: var(--granate);
@@ -506,27 +516,27 @@ body:not(:has(.pantalla:target)) #s-emp {
     border-top: 2px dashed var(--salmon);
 }
 
-.tkt-item {
+.item-ticket {
     padding: 6px 0;
     border-bottom: 1px dashed var(--salmon-light);
 }
 
-.tkt-item:last-child {
+.item-ticket:last-child {
     border: none;
 }
 
-.tkt-item-n {
+.nombre-item-ticket {
     font-weight: 800;
     font-size: .84rem;
 }
 
-.tkt-item-s {
+.sabores-item-ticket {
     font-size: .73rem;
     color: #888;
     font-style: italic;
 }
 
-.ticket-actions {
+.acciones-ticket {
     margin-top: 18px;
     display: flex;
     gap: 10px;
@@ -535,7 +545,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── CONFIRMACIÓN ── */
-.conf-card {
+.tarjeta-confirmacion {
     background: var(--salmon-light);
     border-radius: 18px;
     padding: 34px 26px;
@@ -544,12 +554,12 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin: 34px auto;
 }
 
-.conf-ico {
+.icono-confirmacion {
     font-size: 3.6rem;
     margin-bottom: 9px;
 }
 
-.conf-tit {
+.titulo-confirmacion {
     font-family: 'Fredoka One', cursive;
     font-size: 1.4rem;
     color: var(--granate);
@@ -557,13 +567,13 @@ body:not(:has(.pantalla:target)) #s-emp {
     margin-bottom: 16px;
 }
 
-.conf-det {
+.detalle-confirmacion {
     font-size: .93rem;
     font-weight: 700;
     margin-bottom: 5px;
 }
 
-.conf-btns {
+.botones-confirmacion {
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -600,7 +610,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     border-color: var(--granate);
 }
 
-.tw-d {
+.envoltorio-tabla-oscuro {
     background: var(--dorado-light);
     border-radius: 18px;
     overflow: hidden;
@@ -638,7 +648,7 @@ tr:hover td {
     background: rgba(245, 200, 66, .15);
 }
 
-.ib {
+.boton-en-linea {
     background: none;
     border: none;
     cursor: pointer;
@@ -649,12 +659,12 @@ tr:hover td {
     text-decoration: none;
 }
 
-.ib:hover {
+.boton-en-linea:hover {
     background: rgba(0, 0, 0, .08);
 }
 
 /* ── DETALLE ── */
-.det-card {
+.tarjeta-detalle {
     background: var(--salmon-light);
     border-radius: 18px;
     padding: 22px;
@@ -662,19 +672,19 @@ tr:hover td {
     margin: 0 auto;
 }
 
-.tw {
+.envoltorio-tabla {
     background: var(--salmon-light);
     border-radius: 18px;
     overflow: hidden;
     margin-top: 12px;
 }
 
-.det-info {
+.informacion-detalle {
     margin-bottom: 9px;
     font-weight: 700;
 }
 
-.det-info span {
+.informacion-detalle span {
     color: var(--granate);
     font-weight: 800;
 }
@@ -690,12 +700,12 @@ tr:hover td {
         padding: 7px 4px;
     }
 
-    .v-fila {
+    .fila-venta {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .v-lbl {
+    .etiqueta-venta {
         min-width: unset;
     }
 }

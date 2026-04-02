@@ -13,72 +13,72 @@
 <body>
 
     <div id="s-panel" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-historial">VENTAS</a>
-                <a class="btn btn-d" href="index.html">CERRAR SESIÓN</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-ventas" href="#s-historial">VENTAS</a>
+                <a class="boton boton-cerrar" href="index.html">CERRAR SESIÓN</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="nav-tabs">
-                <a class="nav-tab" href="#s-sabores">SABORES</a>
-                <a class="nav-tab" href="#s-accesorios">ACCESORIOS</a>
-                <a class="nav-tab" href="#s-stock">STOCK</a>
-                <a class="nav-tab" href="#s-historial">HISTORIAL</a>
+            <div class="pestanas-navegacion">
+                <a class="pestana-navegacion" href="#s-sabores">SABORES</a>
+                <a class="pestana-navegacion" href="#s-accesorios">ACCESORIOS</a>
+                <a class="pestana-navegacion" href="#s-stock">STOCK</a>
+                <a class="pestana-navegacion" href="#s-historial">HISTORIAL</a>
             </div>
-            <div class="panel-card">
-                <div class="p-tit">PANEL DE CONTROL</div>
-                <div class="stat">💰 Ventas del día: <span>$18.400</span></div>
-                <div class="stat">🧾 Transacciones hoy: <span>4</span></div>
-                <div class="stat">🔢 Última venta del día: <span>#4</span></div>
-                <div class="stat">⚠️ Sabores stock bajo (&lt;3L): <span>2</span></div>
-                <div class="stat">❌ Sabores sin stock: <span>2</span></div>
-                <div class="stat">📦 Total ventas registradas: <span>2</span></div>
+            <div class="tarjeta-panel">
+                <div class="titulo-panel">PANEL DE CONTROL</div>
+                <div class="estadistica">💰 Ventas del día: <span>$18.400</span></div>
+                <div class="estadistica">🧾 Transacciones hoy: <span>4</span></div>
+                <div class="estadistica">🔢 Última venta del día: <span>#4</span></div>
+                <div class="estadistica">⚠️ Sabores stock bajo (&lt;3L): <span>2</span></div>
+                <div class="estadistica">❌ Sabores sin stock: <span>2</span></div>
+                <div class="estadistica">📦 Total ventas registradas: <span>2</span></div>
             </div>
         </div>
     </div>
 
     <div id="s-sabores" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-panel">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-panel">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
             <div class="barra">
-                <div class="page-title flex-1 no-mb">SABORES</div>
-                <a class="btn btn-s btn-small" href="#">⚙️ EDITAR SECCIONES</a>
-                <a class="btn btn-g" href="#">+ AGREGAR SABOR</a>
+                <div class="titulo-pagina flex-1 no-mb">SABORES</div>
+                <a class="boton boton-secundario boton-pequeno" >⚙️ EDITAR SECCIONES</a>
+                <a class="boton boton-agregar" >+ AGREGAR SABOR</a>
             </div>
 
-            <div class="cat-tabs">
-                <span class="cat-tab activo">Chocolates</span>
-                <span class="cat-tab">Dulces de leche</span>
-                <span class="cat-tab">Frutas al agua</span>
-                <span class="cat-tab">Frutas a la crema</span>
-                <span class="cat-tab">Cremas</span>
-                <span class="cat-tab">Cremas especiales</span>
+            <div class="pestanas-categoria">
+                <span class="pestana-categoria activo">Chocolates</span>
+                <span class="pestana-categoria">Dulces de leche</span>
+                <span class="pestana-categoria">Frutas al agua</span>
+                <span class="pestana-categoria">Frutas a la crema</span>
+                <span class="pestana-categoria">Cremas</span>
+                <span class="pestana-categoria">Cremas especiales</span>
             </div>
 
-            <div class="tw">
+            <div class="envoltorio-tabla">
                 <table>
                     <thead>
                         <tr>
                             <th>NOMBRE</th>
                             <th>PRECIO/LITRO</th>
                             <th>STOCK (L)</th>
-                            <th>✏️</th>
-                            <th>🗑</th>
+                            <th>EDITAR</th>
+                            <th>ELIMINAR</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -86,22 +86,22 @@
                             <td>Chocolate</td>
                             <td>$2.800</td>
                             <td>12 L</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Chocolate amargo</td>
                             <td>$3.000</td>
                             <td>8 L</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Chocolate blanco</td>
                             <td>$3.000</td>
                             <td>5 L</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -110,23 +110,23 @@
     </div>
 
     <div id="s-accesorios" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-panel">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-panel">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
             <div class="barra">
-                <div class="page-title flex-1 no-mb">ACCESORIOS</div>
-                <a class="btn btn-s btn-small" href="#">⚙️ EDITAR TIPOS</a>
-                <a class="btn btn-g" href="#">+ AGREGAR ACCESORIO</a>
+                <div class="titulo-pagina flex-1 no-mb">ACCESORIOS</div>
+                <a class="boton boton-secundario boton-pequeno" >⚙️ EDITAR TIPOS</a>
+                <a class="boton boton-agregar" >+ AGREGAR ACCESORIO</a>
             </div>
-            <div class="tw">
+            <div class="envoltorio-tabla">
                 <table>
                     <thead>
                         <tr>
@@ -146,8 +146,8 @@
                             <td>$2.500</td>
                             <td>30</td>
                             <td>unidades</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Pote 1/2 kg</td>
@@ -155,8 +155,8 @@
                             <td>$4.500</td>
                             <td>20</td>
                             <td>unidades</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Pote 1 kg</td>
@@ -164,8 +164,8 @@
                             <td>$8.000</td>
                             <td>15</td>
                             <td>unidades</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Cucurucho</td>
@@ -173,8 +173,8 @@
                             <td>$800</td>
                             <td>100</td>
                             <td>unidades</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Vaso milkshake</td>
@@ -182,8 +182,8 @@
                             <td>$1.200</td>
                             <td>50</td>
                             <td>unidades</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Caja cucharitas</td>
@@ -191,8 +191,8 @@
                             <td>$1.500</td>
                             <td>12</td>
                             <td>cajas</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Caja servilletas</td>
@@ -200,8 +200,8 @@
                             <td>$900</td>
                             <td>8</td>
                             <td>cajas</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td>Toppings variados</td>
@@ -209,8 +209,8 @@
                             <td>$500</td>
                             <td>25</td>
                             <td>unidades</td>
-                            <td><button class="ib">✏️</button></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><button class="boton-en-linea">✏️</button></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -219,30 +219,30 @@
     </div>
 
     <div id="s-stock" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-panel">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-panel">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">CONTROL DE STOCK</div>
+            <div class="titulo-pagina">CONTROL DE STOCK</div>
 
-            <input type="radio" name="stk-tab" id="stk-tab-sab" class="stock-radio" checked>
-            <input type="radio" name="stk-tab" id="stk-tab-acc" class="stock-radio">
-            <div class="stock-contenido">
-                <div class="stock-tabs-wrap mb-14">
-                    <label class="stock-tab-lbl" for="stk-tab-sab">SABORES</label>
-                    <label class="stock-tab-lbl" for="stk-tab-acc">ACCESORIOS</label>
+            <input type="radio" name="stk-tab" id="stk-tab-sab" class="radio-stock" checked>
+            <input type="radio" name="stk-tab" id="stk-tab-acc" class="radio-stock">
+            <div class="contenido-stock">
+                <div class="envoltorio-pestanas-stock mb-14">
+                    <label class="etiqueta-pestana-stock" for="stk-tab-sab">SABORES</label>
+                    <label class="etiqueta-pestana-stock" for="stk-tab-acc">ACCESORIOS</label>
                 </div>
 
-                <div id="stk-sab" class="stk-sec">
-                    <div class="stock-filtros">
-                        <select class="stock-sel">
+                <div id="stk-sab" class="seccion-stock">
+                    <div class="filtros-stock">
+                        <select class="selector-stock">
                             <option value="">Ver todos</option>
                             <option>Chocolates</option>
                             <option>Dulces de leche</option>
@@ -253,7 +253,7 @@
                         </select>
                         <input class="buscador" type="text" placeholder="🔍 Buscar sabor...">
                     </div>
-                    <div class="tw">
+                    <div class="envoltorio-tabla">
                         <table>
                             <thead>
                                 <tr>
@@ -269,121 +269,121 @@
                                     <td>Chocolate</td>
                                     <td>Chocolates</td>
                                     <td>12 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Chocolate amargo</td>
                                     <td>Chocolates</td>
                                     <td>8 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Chocolate blanco</td>
                                     <td>Chocolates</td>
                                     <td>5 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Dulce de leche</td>
                                     <td>Dulces de leche</td>
                                     <td>10 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Dulce de leche granizado</td>
                                     <td>Dulces de leche</td>
                                     <td>7 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Dulce de leche con nueces</td>
                                     <td>Dulces de leche</td>
                                     <td>4 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Limón</td>
                                     <td>Frutas al agua</td>
                                     <td>8 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Frutilla</td>
                                     <td>Frutas al agua</td>
                                     <td>6 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Mango</td>
                                     <td>Frutas al agua</td>
                                     <td>3 L</td>
-                                    <td><span class="badge b-low">BAJO ⚠️</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-bajo">BAJO ⚠️</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Maracuyá</td>
                                     <td>Frutas al agua</td>
                                     <td>0 L</td>
-                                    <td><span class="badge b-no">SIN STOCK</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-sin-stock">SIN STOCK</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Vainilla</td>
                                     <td>Frutas a la crema</td>
                                     <td>10 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Banana split</td>
                                     <td>Frutas a la crema</td>
                                     <td>4 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Crema tramontana</td>
                                     <td>Cremas</td>
                                     <td>6 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Menta granizada</td>
                                     <td>Cremas especiales</td>
                                     <td>5 L</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Tiramisú</td>
                                     <td>Cremas especiales</td>
                                     <td>2 L</td>
-                                    <td><span class="badge b-low">BAJO ⚠️</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-bajo">BAJO ⚠️</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Pistacho</td>
                                     <td>Cremas especiales</td>
                                     <td>0 L</td>
-                                    <td><span class="badge b-no">SIN STOCK</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-sin-stock">SIN STOCK</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <div id="stk-acc" class="stk-sec">
-                    <div class="tw">
+                <div id="stk-acc" class="seccion-stock">
+                    <div class="envoltorio-tabla">
                         <table>
                             <thead>
                                 <tr>
@@ -401,64 +401,64 @@
                                     <td>Pote 1/4 kg</td>
                                     <td>30</td>
                                     <td>unidades</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Pote 1/2 kg</td>
                                     <td>Pote 1/2 kg</td>
                                     <td>20</td>
                                     <td>unidades</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Pote 1 kg</td>
                                     <td>Pote 1 kg</td>
                                     <td>15</td>
                                     <td>unidades</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Cucurucho</td>
                                     <td>Cucurucho</td>
                                     <td>100</td>
                                     <td>unidades</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Vaso milkshake</td>
                                     <td>Vaso milkshake</td>
                                     <td>50</td>
                                     <td>unidades</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Caja cucharitas</td>
                                     <td>Caja cucharitas</td>
                                     <td>12</td>
                                     <td>cajas</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Caja servilletas</td>
                                     <td>Caja servilletas</td>
                                     <td>8</td>
                                     <td>cajas</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                                 <tr>
                                     <td>Toppings variados</td>
                                     <td>Toppings</td>
                                     <td>25</td>
                                     <td>unidades</td>
-                                    <td><span class="badge b-ok">NORMAL ✓</span></td>
-                                    <td><button class="ib">✏️</button></td>
+                                    <td><span class="badge insignia-normal">NORMAL ✓</span></td>
+                                    <td><button class="boton-en-linea">✏️</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -469,24 +469,24 @@
     </div>
 
     <div id="s-historial" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-panel">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-panel">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">HISTORIAL DE VENTAS</div>
-            <div class="frow">
+            <div class="titulo-pagina">HISTORIAL DE VENTAS</div>
+            <div class="fila-flexible">
                 <input class="buscador" type="text" placeholder="🔍 Buscar empleado...">
                 <input class="buscador maxw-175" type="date">
-                <button class="btn btn-s btn-clean">✕ LIMPIAR</button>
+                <button class="boton boton-secundario boton-limpiar">✕ LIMPIAR</button>
             </div>
-            <div class="tw-d">
+            <div class="envoltorio-tabla-oscuro">
                 <table>
                     <thead>
                         <tr>
@@ -506,8 +506,8 @@
                             <td>$5.800</td>
                             <td>Efectivo</td>
                             <td>Juan</td>
-                            <td><a class="ib" href="#s-detalle1">👁️</a></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><a class="boton-en-linea" href="#s-detalle1">👁️</a></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                         <tr>
                             <td><strong>#2</strong></td>
@@ -515,8 +515,8 @@
                             <td>$4.500</td>
                             <td>Transferencia</td>
                             <td>Ana</td>
-                            <td><a class="ib" href="#s-detalle2">👁️</a></td>
-                            <td><button class="ib">🗑️</button></td>
+                            <td><a class="boton-en-linea" href="#s-detalle2">👁️</a></td>
+                            <td><button class="boton-en-linea">🗑️</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -525,23 +525,23 @@
     </div>
 
     <div id="s-detalle1" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-historial">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-historial">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">DETALLE DE VENTA</div>
-            <div class="det-card">
-                <div class="det-info">Venta del día <span>#1</span></div>
-                <div class="det-info">Fecha: <span>25/03/2026</span></div>
-                <div class="det-info">Empleado: <span>Juan</span></div>
-                <div class="tw" style="margin:12px 0;">
+            <div class="titulo-pagina">DETALLE DE VENTA</div>
+            <div class="tarjeta-detalle">
+                <div class="info-detalle">Venta del día <span>#1</span></div>
+                <div class="info-detalle">Fecha: <span>25/03/2026</span></div>
+                <div class="info-detalle">Empleado: <span>Juan</span></div>
+                <div class="envoltorio-tabla" style="margin:12px 0;">
                     <table>
                         <thead>
                             <tr>
@@ -573,30 +573,30 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="det-info" style="font-size:1rem;">Total: <span>$5.800</span></div>
-                <div class="det-info">Pago: <span>Efectivo</span></div>
+                <div class="info-detalle" style="font-size:1rem;">Total: <span>$5.800</span></div>
+                <div class="info-detalle">Pago: <span>Efectivo</span></div>
             </div>
         </div>
     </div>
 
     <div id="s-detalle2" class="pantalla">
-        <div class="header">
+        <div class="encabezado">
             <div class="logo">
-                <div class="logo-n"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-s">helados</div>
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
             </div>
-            <div class="h-btns">
-                <div class="h-rol">ADMIN</div>
-                <a class="btn btn-v" href="#s-historial">VOLVER</a>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-historial">VOLVER</a>
             </div>
         </div>
         <div class="contenido">
-            <div class="page-title">DETALLE DE VENTA</div>
-            <div class="det-card">
-                <div class="det-info">Venta del día <span>#2</span></div>
-                <div class="det-info">Fecha: <span>25/03/2026</span></div>
-                <div class="det-info">Empleado: <span>Ana</span></div>
-                <div class="tw" style="margin:12px 0;">
+            <div class="titulo-pagina">DETALLE DE VENTA</div>
+            <div class="tarjeta-detalle">
+                <div class="info-detalle">Venta del día <span>#2</span></div>
+                <div class="info-detalle">Fecha: <span>25/03/2026</span></div>
+                <div class="info-detalle">Empleado: <span>Ana</span></div>
+                <div class="envoltorio-tabla" style="margin:12px 0;">
                     <table>
                         <thead>
                             <tr>
@@ -625,8 +625,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="det-info" style="font-size:1rem;">Total: <span>$4.500</span></div>
-                <div class="det-info">Pago: <span>Transferencia</span></div>
+                <div class="info-detalle" style="font-size:1rem;">Total: <span>$4.500</span></div>
+                <div class="info-detalle">Pago: <span>Transferencia</span></div>
             </div>
         </div>
     </div>
