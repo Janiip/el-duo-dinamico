@@ -1,3 +1,8 @@
+<?php 
+include ('conexion.php');
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -20,7 +25,7 @@
             </div>
             <div class="botones-encabezado">
                 <div class="rol-encabezado">EMPLEADO</div>
-                <a class="boton boton-cerrar" href="index.html">CERRAR SESIÓN</a>
+                <a class="boton boton-cerrar" href="index.php">CERRAR SESIÓN</a>
             </div>
         </div>
         <div class="inicio-empleado">
