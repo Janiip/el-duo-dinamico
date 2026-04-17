@@ -478,6 +478,56 @@ tr:hover td {
     display: block;
 }
 
+/* ── MODAL DE AGREGAR SABOR ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2000;
+}
+
+.modal-content {
+    width: min(680px, 100%);
+    background: var(--blanco);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+#add-sabor-form label input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#flavor-edit-form label input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#add-accesorio-form label input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#accesorio-edit-form label input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 @media(max-width:600px) {
     .contenido {
         padding: 13px;

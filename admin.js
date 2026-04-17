@@ -112,23 +112,105 @@ function toggleInactiveFlavorSection() {
     });
 }
 
-function handleFlavorEditButtons() {
-    const editButtons = document.querySelectorAll('.edit-sabor-btn');
-    const editPanel = document.getElementById('edit-sabor-panel');
-    const cancelButton = document.getElementById('cancel-edit-sabor');
+function toggleInactiveAccesorioSection() {
+    const button = document.getElementById('toggle-inactive-accesorios');
+    const section = document.getElementById('inactive-accesorio-section');
+    if (!button || !section) return;
+    button.addEventListener('click', () => {
+        const visible = section.style.display === 'block';
+        section.style.display = visible ? 'none' : 'block';
+        button.textContent = visible ? 'Mostrar/Ocultar' : 'Ocultar';
+    });
+}
 
-    if (cancelButton) {
-        cancelButton.addEventListener('click', () => {
-            if (editPanel) {
-                editPanel.style.display = 'none';
-            }
+function setupAddFlavorModal() {
+    const openButton = document.getElementById('open-add-sabor-modal');
+    const closeButton = document.getElementById('close-add-sabor-modal');
+    const cancelButton = document.getElementById('cancel-add-sabor');
+    const modal = document.getElementById('add-sabor-modal');
+
+    if (!modal) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (openButton) {
+        openButton.addEventListener('click', () => {
+            modal.style.display = 'flex';
         });
     }
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+    if (cancelButton) {
+        cancelButton.addEventListener('click', closeModal);
+    }
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+function setupAddAccesorioModal() {
+    const openButton = document.getElementById('open-add-accesorio-modal');
+    const closeButton = document.getElementById('close-add-accesorio-modal');
+    const cancelButton = document.getElementById('cancel-add-accesorio');
+    const modal = document.getElementById('add-accesorio-modal');
+
+    if (!modal) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (openButton) {
+        openButton.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+    }
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+    if (cancelButton) {
+        cancelButton.addEventListener('click', closeModal);
+    }
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+function handleFlavorEditButtons() {
+    const editButtons = document.querySelectorAll('.edit-sabor-btn');
+    const modal = document.getElementById('edit-sabor-modal');
+    const closeButton = document.getElementById('close-edit-sabor-modal');
+    const cancelButton = document.getElementById('cancel-edit-sabor');
+
+    if (!modal) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+    if (cancelButton) {
+        cancelButton.addEventListener('click', closeModal);
+    }
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
 
     editButtons.forEach(button => {
         button.addEventListener('click', () => {
             const row = button.closest('tr');
-            if (!row || !editPanel) return;
+            if (!row) return;
             const id = row.dataset.id;
             const nombre = row.dataset.nombre || '';
             const tipo = row.dataset.tipo || '';
@@ -140,34 +222,155 @@ function handleFlavorEditButtons() {
             document.getElementById('edit-sabor-tipo').value = tipo;
             document.getElementById('edit-sabor-precio').value = precio;
             document.getElementById('edit-sabor-stock').value = stock;
-            editPanel.style.display = 'block';
-            editPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            modal.style.display = 'flex';
         });
     });
 }
 
 function handleFlavorDeleteButtons() {
     const deleteButtons = document.querySelectorAll('.delete-sabor-btn');
+    const modal = document.getElementById('delete-sabor-modal');
+    const closeButton = document.getElementById('close-delete-sabor-modal');
+    const cancelButton = document.getElementById('cancel-delete-sabor');
+    const confirmButton = document.getElementById('confirm-delete-sabor');
+    const nameNode = document.getElementById('delete-sabor-nombre');
+    const deleteForm = document.getElementById('flavor-delete-form');
+    const deleteIdInput = document.getElementById('delete-sabor-id');
+
+    if (!modal || !deleteForm || !deleteIdInput) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+        modal.dataset.id = '';
+    };
+
+    if (closeButton) closeButton.addEventListener('click', closeModal);
+    if (cancelButton) cancelButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+    });
+    if (confirmButton) {
+        confirmButton.addEventListener('click', () => {
+            const id = modal.dataset.id;
+            if (!id) return;
+            deleteIdInput.value = id;
+            deleteForm.submit();
+        });
+    }
+
     deleteButtons.forEach(button => {
         button.addEventListener('click', () => {
             const row = button.closest('tr');
             if (!row) return;
             const id = row.dataset.id;
             const nombre = row.dataset.nombre || '';
-            if (!confirm(`¿Eliminar el sabor "${nombre}"? Esta acción no se puede deshacer.`)) return;
-
-            const deleteForm = document.getElementById('flavor-delete-form');
-            if (!deleteForm) return;
-            document.getElementById('delete-sabor-id').value = id;
-            deleteForm.submit();
+            modal.dataset.id = id || '';
+            if (nameNode) nameNode.textContent = nombre ? `"${nombre}"` : '—';
+            modal.style.display = 'flex';
         });
     });
 }
 
-function toggleSectionManager() {
-    const panel = document.getElementById('section-manager');
-    if (!panel) return;
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+function handleAccesorioEditButtons() {
+    const editButtons = document.querySelectorAll('.edit-accesorio-btn');
+    const modal = document.getElementById('edit-accesorio-modal');
+    const closeButton = document.getElementById('close-edit-accesorio-modal');
+    const cancelButton = document.getElementById('cancel-edit-accesorio');
+
+    if (!modal) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (closeButton) closeButton.addEventListener('click', closeModal);
+    if (cancelButton) cancelButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+    });
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const row = button.closest('tr');
+            if (!row) return;
+            document.getElementById('edit-accesorio-id').value = row.dataset.id || '';
+            document.getElementById('edit-accesorio-nombre').value = row.dataset.nombre || '';
+            document.getElementById('edit-accesorio-descripcion').value = row.dataset.descripcion || '';
+            document.getElementById('edit-accesorio-precio').value = row.dataset.precio || '';
+            document.getElementById('edit-accesorio-stock').value = row.dataset.stock || '';
+            modal.style.display = 'flex';
+        });
+    });
+}
+
+function handleAccesorioDeleteButtons() {
+    const deleteButtons = document.querySelectorAll('.delete-accesorio-btn');
+    const modal = document.getElementById('delete-accesorio-modal');
+    const closeButton = document.getElementById('close-delete-accesorio-modal');
+    const cancelButton = document.getElementById('cancel-delete-accesorio');
+    const confirmButton = document.getElementById('confirm-delete-accesorio');
+    const nameNode = document.getElementById('delete-accesorio-nombre');
+    const deleteForm = document.getElementById('accesorio-delete-form');
+    const deleteIdInput = document.getElementById('delete-accesorio-id');
+
+    if (!modal || !deleteForm || !deleteIdInput) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+        modal.dataset.id = '';
+    };
+
+    if (closeButton) closeButton.addEventListener('click', closeModal);
+    if (cancelButton) cancelButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+    });
+    if (confirmButton) {
+        confirmButton.addEventListener('click', () => {
+            const id = modal.dataset.id;
+            if (!id) return;
+            deleteIdInput.value = id;
+            deleteForm.submit();
+        });
+    }
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const row = button.closest('tr');
+            if (!row) return;
+            const id = row.dataset.id;
+            const nombre = row.dataset.nombre || '';
+            modal.dataset.id = id || '';
+            if (nameNode) nameNode.textContent = nombre ? `"${nombre}"` : '—';
+            modal.style.display = 'flex';
+        });
+    });
+}
+
+function setupSectionManagerModal() {
+    const openButton = document.getElementById('edit-sections-button');
+    const modal = document.getElementById('section-manager');
+    const closeButton = document.getElementById('close-section-manager');
+
+    if (!modal) return;
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+    const openModal = () => {
+        modal.style.display = 'flex';
+    };
+
+    if (openButton) {
+        openButton.addEventListener('click', openModal);
+    }
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -193,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
         search.addEventListener('input', filterSabores);
     }
     if (editSectionsButton) {
-        editSectionsButton.addEventListener('click', toggleSectionManager);
+        editSectionsButton.addEventListener('click', () => {});
     }
     if (ventasSearch) {
         ventasSearch.addEventListener('input', filterVentas);
@@ -210,5 +413,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFlavorTabs();
     handleFlavorEditButtons();
     handleFlavorDeleteButtons();
+    handleAccesorioEditButtons();
+    handleAccesorioDeleteButtons();
     toggleInactiveFlavorSection();
+    toggleInactiveAccesorioSection();
+    setupAddFlavorModal();
+    setupAddAccesorioModal();
+    setupSectionManagerModal();
 });

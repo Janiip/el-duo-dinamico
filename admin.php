@@ -75,6 +75,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Error interno al preparar la consulta de accesorios.';
             }
         }
+    } elseif (isset($_POST['submit_accesorio_edit'])) {
+        $id = intval($_POST['accesorio_id'] ?? 0);
+        $nombre = trim($_POST['nombre_accesorio_edit'] ?? '');
+        $descripcion = trim($_POST['descripcion_accesorio_edit'] ?? '');
+        $precio = floatval($_POST['precio_accesorio_edit'] ?? 0);
+        $stock = intval($_POST['stock_accesorio_edit'] ?? 0);
+
+        if ($id <= 0 || $nombre === '' || $descripcion === '' || $precio <= 0 || $stock < 0) {
+            $error = 'Complete correctamente el nombre, descripción, precio y stock del accesorio.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE accesorios SET nombre = ?, descripcion = ?, precio = ?, stock_actual = ? WHERE id_accesorio = ? AND estado = \'ACTIVO\'');
+            if ($stmt) {
+                $stmt->bind_param('ssdii', $nombre, $descripcion, $precio, $stock, $id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Accesorio actualizado correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al actualizar el accesorio: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la actualización del accesorio.';
+            }
+        }
+    } elseif (isset($_POST['submit_accesorio_delete'])) {
+        $id = intval($_POST['accesorio_id_delete'] ?? 0);
+
+        if ($id <= 0) {
+            $error = 'No se indicó el accesorio a eliminar.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE accesorios SET estado = \'INACTIVO\' WHERE id_accesorio = ?');
+            if ($stmt) {
+                $stmt->bind_param('i', $id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Accesorio eliminado correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al eliminar el accesorio: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la eliminación del accesorio.';
+            }
+        }
+    } elseif (isset($_POST['submit_accesorio_activate'])) {
+        $id = intval($_POST['accesorio_id_activate'] ?? 0);
+
+        if ($id <= 0) {
+            $error = 'No se indicó el accesorio a activar.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE accesorios SET estado = \'ACTIVO\' WHERE id_accesorio = ?');
+            if ($stmt) {
+                $stmt->bind_param('i', $id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Accesorio activado correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al activar el accesorio: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la activación del accesorio.';
+            }
+        }
     } elseif (isset($_POST['submit_section_rename'])) {
         $oldSection = trim($_POST['old_section'] ?? '');
         $newSection = trim($_POST['new_section'] ?? '');
@@ -197,7 +264,31 @@ $sabores = fetchRows($conexion, 'SELECT id_sabor AS id, nombre, tipo, precio, st
 $sabores_inactivos = fetchRows($conexion, 'SELECT id_sabor AS id, nombre, tipo, precio, stock_actual FROM sabores WHERE estado = \'INACTIVO\' ORDER BY tipo, nombre');
 $sabores_categorias = fetchRows($conexion, 'SELECT DISTINCT tipo FROM sabores WHERE estado = \'ACTIVO\' ORDER BY tipo');
 $accesorios = fetchRows($conexion, 'SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = \'ACTIVO\' ORDER BY nombre');
+$accesorios_inactivos = fetchRows($conexion, 'SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = \'INACTIVO\' ORDER BY nombre');
 $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario ORDER BY v.fecha DESC LIMIT 20');
+
+$ventaDetalle = null;
+$ventaDetalleItems = [];
+$ventaDetalleId = intval($_GET['venta'] ?? 0);
+if ($ventaDetalleId > 0) {
+    $stmt = $conexion->prepare('SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario WHERE v.id_venta = ? LIMIT 1');
+    if ($stmt) {
+        $stmt->bind_param('i', $ventaDetalleId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $ventaDetalle = $result ? $result->fetch_assoc() : null;
+        $stmt->close();
+    }
+
+    $stmtItems = $conexion->prepare('SELECT dv.cantidad, dv.precio_unitario, dv.subtotal, dv.sabores, a.nombre AS accesorio_nombre, a.descripcion AS accesorio_descripcion, s.nombre AS sabor_nombre, s.tipo AS sabor_tipo FROM detalle_ventas dv LEFT JOIN accesorios a ON dv.id_accesorio = a.id_accesorio LEFT JOIN sabores s ON dv.id_sabor = s.id_sabor WHERE dv.id_venta = ?');
+    if ($stmtItems) {
+        $stmtItems->bind_param('i', $ventaDetalleId);
+        $stmtItems->execute();
+        $result = $stmtItems->get_result();
+        $ventaDetalleItems = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        $stmtItems->close();
+    }
+}
 
 $stockBajo = 0;
 $sinStock = 0;
@@ -296,49 +387,68 @@ foreach ($ventas as $v) {
                 <button id="edit-sections-button" type="button" class="boton boton-secundario boton-pequeno">⚙️ EDITAR SECCIONES</button>
             </div>
 
-            <div id="section-manager" style="display:none; margin: 16px 0; padding: 14px; border: 1px solid #cacaca; border-radius: 12px; background: #f7f7f7;">
-                <div style="font-weight:700; margin-bottom:10px;">Administrar secciones de sabores</div>
-                <?php if (count($sabores_categorias) === 0): ?>
-                    <div style="padding:10px; background:#fff; border:1px solid #ddd; border-radius:8px;">No hay secciones registradas.</div>
-                <?php else: ?>
-                    <?php foreach ($sabores_categorias as $categoria): ?>
-                        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:10px;">
-                            <div style="min-width:160px; font-weight:600;"><?= sanitize($categoria['tipo']) ?></div>
-                            <form method="post" style="display:flex; gap:8px; align-items:center; flex:1; min-width:260px;">
-                                <input type="hidden" name="old_section" value="<?= sanitize($categoria['tipo']) ?>">
-                                <input type="text" name="new_section" placeholder="Nuevo nombre" style="flex:1; padding:8px; border:1px solid #bbb; border-radius:8px;">
-                                <button type="submit" name="submit_section_rename" class="boton boton-pequeno">Renombrar</button>
-                            </form>
-                            <form method="post" onsubmit="return confirm('¿Eliminar la sección <?= sanitize($categoria['tipo']) ?> y todos sus sabores?');">
-                                <input type="hidden" name="section_delete" value="<?= sanitize($categoria['tipo']) ?>">
-                                <button type="submit" name="submit_section_delete" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
-                            </form>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+            <div id="section-manager" class="modal-overlay" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>Administrar secciones de sabores</div>
+                        <button type="button" id="close-section-manager" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <?php if (count($sabores_categorias) === 0): ?>
+                        <div style="padding:10px; background:#fff; border:1px solid #ddd; border-radius:8px;">No hay secciones registradas.</div>
+                    <?php else: ?>
+                        <?php foreach ($sabores_categorias as $categoria): ?>
+                            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:10px;">
+                                <div style="min-width:160px; font-weight:600;"><?= sanitize($categoria['tipo']) ?></div>
+                                <form method="post" style="display:flex; gap:8px; align-items:center; flex:1; min-width:260px;">
+                                    <input type="hidden" name="old_section" value="<?= sanitize($categoria['tipo']) ?>">
+                                    <input type="text" name="new_section" placeholder="Nuevo nombre" style="flex:1; padding:8px; border:1px solid #bbb; border-radius:8px;">
+                                    <button type="submit" name="submit_section_rename" class="boton boton-pequeno">Renombrar</button>
+                                </form>
+                                <form method="post" onsubmit="return confirm('¿Eliminar la sección <?= sanitize($categoria['tipo']) ?> y todos sus sabores?');">
+                                    <input type="hidden" name="section_delete" value="<?= sanitize($categoria['tipo']) ?>">
+                                    <button type="submit" name="submit_section_delete" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
+                                </form>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <div style="margin: 16px 0; padding: 14px; border: 1px solid #ddd; border-radius: 12px; background: #fbfbfb;">
                 <div style="font-weight:700; margin-bottom:8px;">Agregar sabor nuevo</div>
-                <form method="post" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
-                    <label style="flex:1; min-width:150px;">
-                        Nombre<br>
-                        <input type="text" name="nombre_sabor" placeholder="Ej: Chocolate" required style="width:100%; padding:8px;">
-                    </label>
-                    <label style="flex:1; min-width:150px;">
-                        Tipo<br>
-                        <input type="text" name="tipo_sabor" placeholder="Ej: Chocolates" required style="width:100%; padding:8px;">
-                    </label>
-                    <label style="width:120px;">
-                        Precio/L<br>
-                        <input type="number" step="0.01" min="0" name="precio_sabor" placeholder="2800" required style="width:100%; padding:8px;">
-                    </label>
-                    <label style="width:120px;">
-                        Stock (L)
-                        <input type="number" step="0.1" min="0" name="stock_sabor" placeholder="12" required style="width:100%; padding:8px;">
-                    </label>
-                    <button type="submit" name="submit_sabor" class="boton boton-agregar" style="margin-top:4px;">+ Agregar SABOR</button>
-                </form>
+                <button type="button" id="open-add-sabor-modal" class="boton boton-agregar">+ Agregar SABOR</button>
+            </div>
+
+            <div id="add-sabor-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>Agregar sabor nuevo</div>
+                        <button type="button" id="close-add-sabor-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <form id="add-sabor-form" method="post" style="display:grid; gap:12px;">
+                        <input type="hidden" name="submit_sabor" value="1">
+                        <label style="display:block;">
+                            Nombre<br>
+                            <input type="text" name="nombre_sabor" placeholder="Ej: Chocolate" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Tipo<br>
+                            <input type="text" name="tipo_sabor" placeholder="Ej: Chocolates" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Precio/L<br>
+                            <input type="number" step="0.01" min="0" name="precio_sabor" placeholder="2800" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Stock (L)<br>
+                            <input type="number" step="0.1" min="0" name="stock_sabor" placeholder="12" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-add-sabor" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="submit" class="boton boton-agregar">Agregar sabor</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div class="pestanas-categoria" id="sabores-tabs">
@@ -428,40 +538,64 @@ foreach ($ventas as $v) {
                 </div>
             </div>
 
-            <div id="edit-sabor-panel" style="display:none; margin-top:20px; padding:16px; border:1px solid #ccc; border-radius:14px; background:#fff; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                    <div style="font-weight:700; font-size:1rem;">Editar sabor</div>
-                    <button type="button" id="cancel-edit-sabor" class="boton boton-secundario boton-pequeno">CERRAR</button>
-                </div>
-                <form id="flavor-edit-form" method="post" style="display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
-                    <input type="hidden" name="submit_sabor_edit" value="1">
-                    <input type="hidden" name="sabor_id" id="edit-sabor-id">
-                    <label style="display:block;">
-                        Nombre<br>
-                        <input type="text" name="nombre_sabor_edit" id="edit-sabor-nombre" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
-                    </label>
-                    <label style="display:block;">
-                        Tipo<br>
-                        <input type="text" name="tipo_sabor_edit" id="edit-sabor-tipo" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
-                    </label>
-                    <label style="display:block;">
-                        Precio/L<br>
-                        <input type="number" step="0.01" min="0" name="precio_sabor_edit" id="edit-sabor-precio" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
-                    </label>
-                    <label style="display:block;">
-                        Stock (L)<br>
-                        <input type="number" step="0.1" min="0" name="stock_sabor_edit" id="edit-sabor-stock" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
-                    </label>
-                    <div style="grid-column:1 / -1; display:flex; gap:10px; justify-content:flex-end;">
-                        <button type="submit" class="boton boton-agregar">Guardar cambios</button>
+            <div id="edit-sabor-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>Editar sabor</div>
+                        <button type="button" id="close-edit-sabor-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
                     </div>
-                </form>
+                    <form id="flavor-edit-form" method="post" style="display:grid; gap:12px;">
+                        <input type="hidden" name="submit_sabor_edit" value="1">
+                        <input type="hidden" name="sabor_id" id="edit-sabor-id">
+                        <label style="display:block;">
+                            Nombre<br>
+                            <input type="text" name="nombre_sabor_edit" id="edit-sabor-nombre" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Tipo<br>
+                            <input type="text" name="tipo_sabor_edit" id="edit-sabor-tipo" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Precio/L<br>
+                            <input type="number" step="0.01" min="0" name="precio_sabor_edit" id="edit-sabor-precio" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Stock (L)<br>
+                            <input type="number" step="0.1" min="0" name="stock_sabor_edit" id="edit-sabor-stock" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-edit-sabor" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="submit" class="boton boton-agregar">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <form id="flavor-delete-form" method="post" style="display:none;">
                 <input type="hidden" name="submit_sabor_delete" value="1">
                 <input type="hidden" name="sabor_id_delete" id="delete-sabor-id">
             </form>
+
+            <div id="delete-sabor-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content" style="width:min(560px, 100%);">
+                    <div class="modal-header">
+                        <div>Eliminar sabor</div>
+                        <button type="button" id="close-delete-sabor-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <div style="display:grid; gap:12px;">
+                        <div style="padding:12px; border:1px solid #eee; border-radius:12px; background:#fff7f7;">
+                            ¿Seguro que querés eliminar el sabor <strong id="delete-sabor-nombre">—</strong>?
+                            <div style="margin-top:6px; color:#8a1c1c; font-weight:700; font-size:.9rem;">
+                                Esta acción lo pasa a INACTIVO (no se puede deshacer desde acá).
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-delete-sabor" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="button" id="confirm-delete-sabor" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -479,29 +613,42 @@ foreach ($ventas as $v) {
         <div class="contenido">
             <div class="barra">
                 <div class="titulo-pagina flex-1 no-mb">ACCESORIOS</div>
-                <a class="boton boton-secundario boton-pequeno" >⚙️ EDITAR TIPOS</a>
             </div>
             <div style="margin: 16px 0; padding: 14px; border: 1px solid #ddd; border-radius: 12px; background: #fbfbfb;">
                 <div style="font-weight:700; margin-bottom:8px;">Agregar accesorio nuevo</div>
-                <form method="post" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
-                    <label style="flex:1; min-width:150px;">
-                        Nombre<br>
-                        <input type="text" name="nombre_accesorio" placeholder="Ej: Cucurucho" required style="width:100%; padding:8px;">
-                    </label>
-                    <label style="flex:1; min-width:150px;">
-                        Descripción<br>
-                        <input type="text" name="descripcion_accesorio" placeholder="Ej: Cucurucho" required style="width:100%; padding:8px;">
-                    </label>
-                    <label style="width:120px;">
-                        Precio unit.
-                        <input type="number" step="0.01" min="0" name="precio_accesorio" placeholder="800" required style="width:100%; padding:8px;">
-                    </label>
-                    <label style="width:120px;">
-                        Stock
-                        <input type="number" min="0" name="stock_accesorio" placeholder="100" required style="width:100%; padding:8px;">
-                    </label>
-                    <button type="submit" name="submit_accesorio" class="boton boton-agregar" style="margin-top:4px;">+ Agregar ACCESORIO</button>
-                </form>
+                <button type="button" id="open-add-accesorio-modal" class="boton boton-agregar">+ Agregar ACCESORIO</button>
+            </div>
+
+            <div id="add-accesorio-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>Agregar accesorio nuevo</div>
+                        <button type="button" id="close-add-accesorio-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <form id="add-accesorio-form" method="post" style="display:grid; gap:12px;">
+                        <input type="hidden" name="submit_accesorio" value="1">
+                        <label style="display:block;">
+                            Nombre<br>
+                            <input type="text" name="nombre_accesorio" placeholder="Ej: Cucurucho" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Descripción<br>
+                            <input type="text" name="descripcion_accesorio" placeholder="Ej: Cucurucho de chocolate" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Precio unit.<br>
+                            <input type="number" step="0.01" min="0" name="precio_accesorio" placeholder="800" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Stock<br>
+                            <input type="number" min="0" name="stock_accesorio" placeholder="100" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-add-accesorio" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="submit" class="boton boton-agregar">Agregar accesorio</button>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="envoltorio-tabla">
                 <table>
@@ -523,19 +670,127 @@ foreach ($ventas as $v) {
                             </tr>
                         <?php else: ?>
                             <?php foreach ($accesorios as $accesorio): ?>
-                                <tr>
+                                <tr data-id="<?= sanitize($accesorio['id']) ?>"
+                                    data-nombre="<?= sanitize($accesorio['nombre']) ?>"
+                                    data-descripcion="<?= sanitize($accesorio['descripcion']) ?>"
+                                    data-precio="<?= sanitize($accesorio['precio']) ?>"
+                                    data-stock="<?= sanitize($accesorio['stock_actual']) ?>">
                                     <td><?= sanitize($accesorio['nombre']) ?></td>
                                     <td><?= sanitize($accesorio['descripcion']) ?></td>
                                     <td><?= formatMoney($accesorio['precio']) ?></td>
                                     <td><?= sanitize($accesorio['stock_actual']) ?></td>
                                     <td><span class="badge insignia-normal">ACTIVO</span></td>
-                                    <td><button class="boton-en-linea">✏️</button></td>
-                                    <td><button class="boton-en-linea">🗑️</button></td>
+                                    <td><button type="button" class="boton-en-linea edit-accesorio-btn">✏️</button></td>
+                                    <td><button type="button" class="boton-en-linea delete-accesorio-btn">🗑️</button></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <div style="margin-top:24px; padding:16px; border:1px solid #ddd; border-radius:14px; background:#f7f7f7;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px;">
+                    <div style="font-weight:700;">Accesorios inactivos (<?= sanitize(count($accesorios_inactivos)) ?>)</div>
+                    <button type="button" id="toggle-inactive-accesorios" class="boton boton-secundario boton-pequeno">Mostrar/Ocultar</button>
+                </div>
+                <div id="inactive-accesorio-section" style="display:none;">
+                    <div class="envoltorio-tabla">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE</th>
+                                    <th>DESCRIPCIÓN</th>
+                                    <th>PRECIO</th>
+                                    <th>STOCK</th>
+                                    <th>ACTIVAR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (count($accesorios_inactivos) === 0): ?>
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; padding:18px 0;">No hay accesorios inactivos.</td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($accesorios_inactivos as $acc): ?>
+                                        <tr>
+                                            <td><?= sanitize($acc['nombre']) ?></td>
+                                            <td><?= sanitize($acc['descripcion']) ?></td>
+                                            <td><?= formatMoney($acc['precio']) ?></td>
+                                            <td><?= sanitize($acc['stock_actual']) ?></td>
+                                            <td>
+                                                <form method="post" style="margin:0; display:inline;">
+                                                    <input type="hidden" name="submit_accesorio_activate" value="1">
+                                                    <input type="hidden" name="accesorio_id_activate" value="<?= sanitize($acc['id']) ?>">
+                                                    <button type="submit" class="boton boton-agregar boton-pequeno">ACTIVAR</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="edit-accesorio-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>Editar accesorio</div>
+                        <button type="button" id="close-edit-accesorio-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <form id="accesorio-edit-form" method="post" style="display:grid; gap:12px;">
+                        <input type="hidden" name="submit_accesorio_edit" value="1">
+                        <input type="hidden" name="accesorio_id" id="edit-accesorio-id">
+                        <label style="display:block;">
+                            Nombre<br>
+                            <input type="text" name="nombre_accesorio_edit" id="edit-accesorio-nombre" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Descripción<br>
+                            <input type="text" name="descripcion_accesorio_edit" id="edit-accesorio-descripcion" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Precio unit.<br>
+                            <input type="number" step="0.01" min="0" name="precio_accesorio_edit" id="edit-accesorio-precio" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            Stock<br>
+                            <input type="number" min="0" name="stock_accesorio_edit" id="edit-accesorio-stock" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-edit-accesorio" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="submit" class="boton boton-agregar">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <form id="accesorio-delete-form" method="post" style="display:none;">
+                <input type="hidden" name="submit_accesorio_delete" value="1">
+                <input type="hidden" name="accesorio_id_delete" id="delete-accesorio-id">
+            </form>
+
+            <div id="delete-accesorio-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content" style="width:min(560px, 100%);">
+                    <div class="modal-header">
+                        <div>Eliminar accesorio</div>
+                        <button type="button" id="close-delete-accesorio-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <div style="display:grid; gap:12px;">
+                        <div style="padding:12px; border:1px solid #eee; border-radius:12px; background:#fff7f7;">
+                            ¿Seguro que querés eliminar el accesorio <strong id="delete-accesorio-nombre">—</strong>?
+                            <div style="margin-top:6px; color:#8a1c1c; font-weight:700; font-size:.9rem;">
+                                Esta acción lo pasa a INACTIVO (no se puede deshacer desde acá).
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-delete-accesorio" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="button" id="confirm-delete-accesorio" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -684,7 +939,7 @@ foreach ($ventas as $v) {
                                     <td><?= formatMoney($venta['total']) ?></td>
                                     <td><?= sanitize($venta['pago']) ?></td>
                                     <td><?= sanitize($venta['empleado']) ?></td>
-                                    <td><a class="boton-en-linea" href="#">👁️</a></td>
+                                    <td><a class="boton-en-linea" href="admin.php?venta=<?= sanitize($venta['id']) ?>#s-venta-detalle">👁️</a></td>
                                     <td><button class="boton-en-linea">🗑️</button></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -695,7 +950,7 @@ foreach ($ventas as $v) {
         </div>
     </div>
 
-    <div id="s-detalle1" class="pantalla">
+    <div id="s-venta-detalle" class="pantalla">
         <div class="encabezado">
             <div class="logo">
                 <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
@@ -708,97 +963,65 @@ foreach ($ventas as $v) {
         </div>
         <div class="contenido">
             <div class="titulo-pagina">DETALLE DE VENTA</div>
-            <div class="tarjeta-detalle">
-                <div class="info-detalle">Venta del día <span>#1</span></div>
-                <div class="info-detalle">Fecha: <span>25/03/2026</span></div>
-                <div class="info-detalle">Empleado: <span>Juan</span></div>
-                <div class="envoltorio-tabla" style="margin:12px 0;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align:left;">PRODUCTO</th>
-                                <th>CANT.</th>
-                                <th>PRECIO</th>
-                                <th>SUBTOTAL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="text-align:left;padding:8px 9px;">
-                                    Pote 1/4 kg<br>
-                                    <small style="color:#888;font-style:italic;">Chocolate · Vainilla</small>
-                                </td>
-                                <td>1</td>
-                                <td>$2.500</td>
-                                <td>$2.500</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:left;padding:8px 9px;">
-                                    Cucurucho<br>
-                                    <small style="color:#888;font-style:italic;">Dulce de leche</small>
-                                </td>
-                                <td>2</td>
-                                <td>$800</td>
-                                <td>$1.600</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <?php if (!$ventaDetalleId): ?>
+                <div style="padding:12px 14px; background:#fff; border-radius:14px; border:1px solid #ddd; font-weight:700;">
+                    Seleccioná una venta desde el historial para ver su ticket.
                 </div>
-                <div class="info-detalle" style="font-size:1rem;">Total: <span>$5.800</span></div>
-                <div class="info-detalle">Pago: <span>Efectivo</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="s-detalle2" class="pantalla">
-        <div class="encabezado">
-            <div class="logo">
-                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
-                <div class="logo-subtitulo">helados</div>
-            </div>
-            <div class="botones-encabezado">
-                <div class="rol-encabezado">ADMIN</div>
-                <a class="boton boton-volver" href="#s-historial">VOLVER</a>
-            </div>
-        </div>
-        <div class="contenido">
-            <div class="titulo-pagina">DETALLE DE VENTA</div>
-            <div class="tarjeta-detalle">
-                <div class="info-detalle">Venta del día <span>#2</span></div>
-                <div class="info-detalle">Fecha: <span>25/03/2026</span></div>
-                <div class="info-detalle">Empleado: <span>Ana</span></div>
-                <div class="envoltorio-tabla" style="margin:12px 0;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align:left;">PRODUCTO</th>
-                                <th>CANT.</th>
-                                <th>PRECIO</th>
-                                <th>SUBTOTAL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="text-align:left;padding:8px 9px;">
-                                    Pote 1/4 kg<br>
-                                    <small style="color:#888;font-style:italic;">Frutilla · Limón</small>
-                                </td>
-                                <td>1</td>
-                                <td>$2.500</td>
-                                <td>$2.500</td>
-                            </tr>
-                            <tr>
-                                <td style="text-align:left;padding:8px 9px;">Caja servilletas</td>
-                                <td>1</td>
-                                <td>$900</td>
-                                <td>$900</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <?php elseif (!$ventaDetalle): ?>
+                <div style="padding:12px 14px; background:#fff7f7; border-radius:14px; border:1px solid #f0c7c7; color:#8a1c1c; font-weight:800;">
+                    No se encontró la venta #<?= sanitize($ventaDetalleId) ?>.
                 </div>
-                <div class="info-detalle" style="font-size:1rem;">Total: <span>$4.500</span></div>
-                <div class="info-detalle">Pago: <span>Transferencia</span></div>
-            </div>
+            <?php else: ?>
+                <div class="tarjeta-detalle">
+                    <div class="info-detalle">Venta del día <span>#<?= sanitize($ventaDetalle['id']) ?></span></div>
+                    <div class="info-detalle">Fecha: <span><?= sanitize(date('d/m/Y H:i', strtotime($ventaDetalle['fecha']))) ?></span></div>
+                    <div class="info-detalle">Empleado: <span><?= sanitize($ventaDetalle['empleado']) ?></span></div>
+                    <div class="envoltorio-tabla" style="margin:12px 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">PRODUCTO</th>
+                                    <th>CANT.</th>
+                                    <th>PRECIO</th>
+                                    <th>SUBTOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (count($ventaDetalleItems) === 0): ?>
+                                    <tr>
+                                        <td colspan="4" style="text-align:center; padding:18px 0;">
+                                            No hay items registrados para esta venta.<br>
+                                            <small style="color:#8a1c1c; font-weight:800;">
+                                                Se registró el total, pero no se guardó el detalle de productos en la base de datos.
+                                            </small>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($ventaDetalleItems as $item): ?>
+                                        <?php
+                                            $nombreProducto = $item['accesorio_nombre'] ?: ($item['sabor_nombre'] ?: 'Producto');
+                                            $detalleProducto = $item['sabores'] ?: ($item['accesorio_descripcion'] ?: ($item['sabor_tipo'] ? ('Tipo: ' . $item['sabor_tipo']) : ''));
+                                        ?>
+                                        <tr>
+                                            <td style="text-align:left;padding:8px 9px;">
+                                                <?= sanitize($nombreProducto) ?>
+                                                <?php if (trim($detalleProducto) !== ''): ?>
+                                                    <br><small style="color:#888;font-style:italic;"><?= sanitize($detalleProducto) ?></small>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= sanitize($item['cantidad']) ?></td>
+                                            <td><?= formatMoney($item['precio_unitario']) ?></td>
+                                            <td><?= formatMoney($item['subtotal']) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="info-detalle" style="font-size:1rem;">Total: <span><?= formatMoney($ventaDetalle['total']) ?></span></div>
+                    <div class="info-detalle">Pago: <span><?= sanitize($ventaDetalle['pago']) ?></span></div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 include('conexion.php');
 
@@ -74,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
     $productoIds = $_POST['producto_id'] ?? [];
     $cantidades = $_POST['cantidad'] ?? [];
     $metodoPago = $_POST['metodo_pago'] ?? 'EFECTIVO';
+    $saboresPorProducto = $_POST['sabores'] ?? [];
     $items = [];
     $totalVenta = 0;
 
@@ -107,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
             'precio' => $producto['precio'],
             'cantidad' => $cantidad,
             'subtotal' => $subtotal,
+            'index' => $index,
         ];
         $totalVenta += $subtotal;
     }
@@ -128,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
                 $error = 'Error al guardar la venta: ' . $conexion->error;
             } else {
                 $ventaId = $conexion->insert_id;
-                $stmtDetalle = $conexion->prepare('INSERT INTO detalle_ventas (id_venta, id_sabor, id_accesorio, cantidad, precio_unitario, subtotal) VALUES (?, NULL, ?, ?, ?, ?)');
+                $stmtDetalle = $conexion->prepare('INSERT INTO detalle_ventas (id_venta, id_sabor, id_accesorio, cantidad, precio_unitario, subtotal, sabores) VALUES (?, NULL, ?, ?, ?, ?, ?)');
                 $stmtUpdate = $conexion->prepare('UPDATE accesorios SET stock_actual = stock_actual - ? WHERE id_accesorio = ?');
 
                 if (!$stmtDetalle || !$stmtUpdate) {
@@ -136,7 +138,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
                     $error = 'Error interno al preparar los detalles de la venta.';
                 } else {
                     foreach ($items as $item) {
-                        $stmtDetalle->bind_param('iiidd', $ventaId, $item['id'], $item['cantidad'], $item['precio'], $item['subtotal']);
+                        $flavorsKey = strval((intval($item['index'] ?? 0)) + 1);
+                        $saboresElegidos = $saboresPorProducto[$flavorsKey] ?? [];
+                        if (!is_array($saboresElegidos)) {
+                            $saboresElegidos = [];
+                        }
+                        $saboresElegidos = array_map('trim', $saboresElegidos);
+                        $saboresElegidos = array_values(array_filter($saboresElegidos, function ($v) {
+                            return $v !== '';
+                        }));
+                        $saboresTexto = count($saboresElegidos) ? implode(' / ', $saboresElegidos) : null;
+                        if ($saboresTexto !== null && strlen($saboresTexto) > 500) {
+                            $saboresTexto = substr($saboresTexto, 0, 500);
+                        }
+                        $stmtDetalle->bind_param('iiidds', $ventaId, $item['id'], $item['cantidad'], $item['precio'], $item['subtotal'], $saboresTexto);
                         if (!$stmtDetalle->execute()) {
                             $conexion->rollback();
                             $error = 'Error al guardar un detalle de venta: ' . $conexion->error;
@@ -173,6 +188,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
 $sabores = fetchRows($conexion, "SELECT id_sabor AS id, nombre, tipo, precio, stock_actual FROM sabores WHERE estado = 'ACTIVO' ORDER BY tipo, nombre");
 $accesorios = fetchRows($conexion, "SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = 'ACTIVO' ORDER BY nombre");
 $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario WHERE v.id_empleado = ' . intval($empleadoId) . ' ORDER BY v.fecha DESC LIMIT 20');
+
+$ventaDetalle = null;
+$ventaDetalleItems = [];
+$ventaDetalleId = intval($_GET['venta'] ?? 0);
+if ($ventaDetalleId > 0) {
+    $stmt = $conexion->prepare('SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario WHERE v.id_venta = ? AND v.id_empleado = ? LIMIT 1');
+    if ($stmt) {
+        $stmt->bind_param('ii', $ventaDetalleId, $empleadoId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $ventaDetalle = $result ? $result->fetch_assoc() : null;
+        $stmt->close();
+    }
+
+    $stmtItems = $conexion->prepare('SELECT dv.cantidad, dv.precio_unitario, dv.subtotal, dv.sabores, a.nombre AS accesorio_nombre, a.descripcion AS accesorio_descripcion FROM detalle_ventas dv LEFT JOIN accesorios a ON dv.id_accesorio = a.id_accesorio WHERE dv.id_venta = ?');
+    if ($stmtItems) {
+        $stmtItems->bind_param('i', $ventaDetalleId);
+        $stmtItems->execute();
+        $result = $stmtItems->get_result();
+        $ventaDetalleItems = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        $stmtItems->close();
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -406,7 +444,7 @@ $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta 
                                     <td><?= formatMoney($venta['total']) ?></td>
                                     <td><?= sanitize($venta['pago']) ?></td>
                                     <td><?= sanitize($venta['empleado']) ?></td>
-                                    <td><a class="boton-en-linea" href="#s-detalle1"></a></td>
+                                    <td><a class="boton-en-linea" href="empleado.php?venta=<?= sanitize($venta['id']) ?>#s-venta-detalle">👁️</a></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -416,7 +454,7 @@ $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta 
         </div>
     </div>
 
-    <div id="s-detalle1" class="pantalla">
+    <div id="s-venta-detalle" class="pantalla">
         <div class="encabezado">
             <div class="logo">
                 <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
@@ -429,253 +467,76 @@ $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta 
         </div>
         <div class="contenido">
             <div class="titulo-pagina">DETALLE DE VENTA</div>
-            <div class="tarjeta-detalle">
-                <div class="informacion-detalle">Venta del día <span>#1</span></div>
-                <div class="informacion-detalle">Fecha: <span>15/04/2026</span></div>
-                <div class="informacion-detalle">Empleado: <span><?= sanitize($_SESSION['usuario']) ?></span></div>
-                <div class="envoltorio-tabla" style="margin:12px 0;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="text-align:left;">PRODUCTO</th>
-                                <th>CANT.</th>
-                                <th>PRECIO</th>
-                                <th>SUBTOTAL</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="text-align:left;padding:8px 9px;">
-                                    Pote 1/4 kg<br>
-                                    <small style="color:#888;font-style:italic;">Chocolate / Vainilla</small>
-                                </td>
-                                <td>1</td>
-                                <td>$2.500</td>
-                                <td>$2.500</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <?php if (!$ventaDetalleId): ?>
+                <div style="padding:12px 14px; background:#fff; border-radius:14px; border:1px solid #ddd; font-weight:700;">
+                    Seleccioná una venta desde el historial para ver su ticket.
                 </div>
-                <div class="informacion-detalle" style="font-size:1rem;">Total: <span>$2.500</span></div>
-                <div class="informacion-detalle">Pago: <span>EFECTIVO</span></div>
-            </div>
+            <?php elseif (!$ventaDetalle): ?>
+                <div style="padding:12px 14px; background:#fff7f7; border-radius:14px; border:1px solid #f0c7c7; color:#8a1c1c; font-weight:800;">
+                    No se encontró la venta #<?= sanitize($ventaDetalleId) ?> (o no te pertenece).
+                </div>
+            <?php else: ?>
+                <div class="tarjeta-detalle">
+                    <div class="informacion-detalle">Venta del día <span>#<?= sanitize($ventaDetalle['id']) ?></span></div>
+                    <div class="informacion-detalle">Fecha: <span><?= sanitize(date('d/m/Y H:i', strtotime($ventaDetalle['fecha']))) ?></span></div>
+                    <div class="informacion-detalle">Empleado: <span><?= sanitize($ventaDetalle['empleado']) ?></span></div>
+                    <div class="envoltorio-tabla" style="margin:12px 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">PRODUCTO</th>
+                                    <th>CANT.</th>
+                                    <th>PRECIO</th>
+                                    <th>SUBTOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (count($ventaDetalleItems) === 0): ?>
+                                    <tr>
+                                        <td colspan="4" style="text-align:center; padding:18px 0;">
+                                            No hay items registrados para esta venta.<br>
+                                            <small style="color:#8a1c1c; font-weight:800;">
+                                                Se registró el total, pero no se guardó el detalle de productos en la base de datos.
+                                            </small>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($ventaDetalleItems as $item): ?>
+                                        <?php
+                                            $nombreProducto = $item['accesorio_nombre'] ?: 'Producto';
+                                            $detalleProducto = $item['sabores'] ? $item['sabores'] : ($item['accesorio_descripcion'] ?: '');
+                                        ?>
+                                        <tr>
+                                            <td style="text-align:left;padding:8px 9px;">
+                                                <?= sanitize($nombreProducto) ?>
+                                                <?php if (trim($detalleProducto) !== ''): ?>
+                                                    <br><small style="color:#888;font-style:italic;"><?= sanitize($detalleProducto) ?></small>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= sanitize($item['cantidad']) ?></td>
+                                            <td><?= formatMoney($item['precio_unitario']) ?></td>
+                                            <td><?= formatMoney($item['subtotal']) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="informacion-detalle" style="font-size:1rem;">Total: <span><?= formatMoney($ventaDetalle['total']) ?></span></div>
+                    <div class="informacion-detalle">Pago: <span><?= sanitize($ventaDetalle['pago']) ?></span></div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
     <script>
-        const accesoriosData = <?= json_encode($accesorios) ?>;
-        const LOW_STOCK_THRESHOLD = 3;
-
-        function formatMoneyJS(value) {
-            return '$' + Number(value).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-        }
-
-        function updateRowPrice(row) {
-            const productSelect = row.querySelector('.tipo-producto');
-            const quantityInput = row.querySelector('.cantidad-producto');
-            const priceInput = row.querySelector('.precio-unitario');
-            const selectedOption = productSelect.selectedOptions[0];
-
-            if (!selectedOption || !selectedOption.value) {
-                priceInput.value = '';
-                recalculateTotal();
-                return;
-            }
-
-            const price = parseFloat(selectedOption.dataset.price) || 0;
-            const quantity = Math.max(1, parseInt(quantityInput.value, 10) || 1);
-            priceInput.value = formatMoneyJS(price);
-            recalculateTotal();
-        }
-
-        function recalculateTotal() {
-            const rows = document.querySelectorAll('.item-producto');
-            let total = 0;
-            rows.forEach(row => {
-                const productSelect = row.querySelector('.tipo-producto');
-                const quantityInput = row.querySelector('.cantidad-producto');
-                const selectedOption = productSelect.selectedOptions[0];
-                if (!selectedOption || !selectedOption.value) return;
-                const price = parseFloat(selectedOption.dataset.price) || 0;
-                const quantity = Math.max(1, parseInt(quantityInput.value, 10) || 1);
-                total += price * quantity;
-            });
-            document.querySelector('.caja-total span').textContent = formatMoneyJS(total);
-        }
-
-        function setupProductRow(row) {
-            const productSelect = row.querySelector('.tipo-producto');
-            const quantityInput = row.querySelector('.cantidad-producto');
-            const removeButton = row.querySelector('.boton-eliminar-item');
-
-            productSelect.addEventListener('change', () => updateRowPrice(row));
-            quantityInput.addEventListener('input', () => {
-                if (quantityInput.value === '' || parseInt(quantityInput.value, 10) < 1) {
-                    quantityInput.value = 1;
-                }
-                updateRowPrice(row);
-            });
-            setupFlavorButtons(row);
-
-            removeButton.addEventListener('click', () => {
-                const rows = document.querySelectorAll('.item-producto');
-                if (rows.length === 1) return;
-                row.remove();
-                updateProductNumbers();
-                recalculateTotal();
-            });
-        }
-
-        function setupFlavorButtons(row) {
-            const flavorButtons = row.querySelectorAll('.sabor-boton');
-            flavorButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    if (button.disabled) return;
-                    const selected = row.querySelectorAll('.sabor-boton.seleccionado');
-                    if (!button.classList.contains('seleccionado') && selected.length >= 3) {
-                        return;
-                    }
-                    button.classList.toggle('seleccionado');
-                    updateFlavorInputs(row);
-                });
-            });
-            updateFlavorInputs(row);
-        }
-
-        function updateFlavorInputs(row) {
-            let hiddenContainer = row.querySelector('.hidden-flavors');
-            if (!hiddenContainer) {
-                hiddenContainer = document.createElement('div');
-                hiddenContainer.className = 'hidden-flavors';
-                hiddenContainer.style.display = 'none';
-                row.appendChild(hiddenContainer);
-            }
-            hiddenContainer.innerHTML = '';
-            const selected = row.querySelectorAll('.sabor-boton.seleccionado');
-            selected.forEach((button, index) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'sabores[' + (row.dataset.index || 0) + '][]';
-                input.value = button.dataset.sabor;
-                hiddenContainer.appendChild(input);
-            });
-        }
-
-        function updateProductNumbers() {
-            document.querySelectorAll('.item-producto').forEach((row, index) => {
-                row.dataset.index = index + 1;
-            });
-        }
-
-        function addProductRow() {
-            const container = document.getElementById('carrito');
-            const template = document.querySelector('.item-producto');
-            const newRow = template.cloneNode(true);
-            newRow.dataset.index = container.querySelectorAll('.item-producto').length + 1;
-            newRow.querySelector('.tipo-producto').selectedIndex = 0;
-            newRow.querySelector('.precio-unitario').value = '';
-            newRow.querySelector('.cantidad-producto').value = 1;
-            newRow.querySelectorAll('.sabor-boton').forEach(button => button.classList.remove('seleccionado'));
-            newRow.querySelectorAll('.sabor-boton').forEach(button => button.disabled = button.classList.contains('agotado'));
-            const hiddenContainer = newRow.querySelector('.hidden-flavors');
-            if (hiddenContainer) hiddenContainer.innerHTML = '';
-            container.appendChild(newRow);
-            setupProductRow(newRow);
-            updateProductNumbers();
-        }
-
-        function renderTicket() {
-            const rows = document.querySelectorAll('.item-producto');
-            const items1 = document.getElementById('ticket-items-1');
-            const items2 = document.getElementById('ticket-items-2');
-            items1.innerHTML = '';
-            items2.innerHTML = '';
-            let total = 0;
-
-            rows.forEach(row => {
-                const productSelect = row.querySelector('.tipo-producto');
-                const quantityInput = row.querySelector('.cantidad-producto');
-                const selectedOption = productSelect.selectedOptions[0];
-                if (!selectedOption || !selectedOption.value) return;
-
-                const quantity = Math.max(1, parseInt(quantityInput.value, 10) || 1);
-                const price = parseFloat(selectedOption.dataset.price) || 0;
-                const name = selectedOption.dataset.name || '';
-                const subtotal = price * quantity;
-                total += subtotal;
-
-                const selectedFlavors = Array.from(row.querySelectorAll('.sabor-boton.seleccionado')).map(btn => btn.dataset.sabor);
-                const flavorText = selectedFlavors.length ? ' — ' + sanitizeJS(selectedFlavors.join(' / ')) : '';
-                const itemHtml = `
-                    <div class="item-ticket">
-                        <div class="nombre-item-ticket">${name} x${quantity} ${formatMoneyJS(price)}</div>
-                        <div class="sabores-item-ticket">${sanitizeJS(selectedOption.textContent)}${flavorText}</div>
-                    </div>`;
-
-                items1.insertAdjacentHTML('beforeend', itemHtml);
-                items2.insertAdjacentHTML('beforeend', itemHtml);
-            });
-
-            document.getElementById('ticket-total').textContent = formatMoneyJS(total);
-            document.getElementById('ticket-total-client').textContent = formatMoneyJS(total);
-            const now = new Date();
-            document.getElementById('ticket-fecha').textContent = now.toLocaleDateString('es-AR');
-            document.getElementById('ticket-fecha-client').textContent = now.toLocaleDateString('es-AR');
-            const ticketNumber = Math.floor(Math.random() * 9000) + 1000;
-            document.getElementById('ticket-number').textContent = '#' + ticketNumber;
-            document.getElementById('ticket-number-client').textContent = '#' + ticketNumber;
-            document.getElementById('ticket-pago').textContent = document.getElementById('metodo_pago').value;
-            document.getElementById('ticket-pago-client').textContent = document.getElementById('metodo_pago').value;
-        }
-
-        function sanitizeJS(value) {
-            return String(value)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-
-        function setPaymentMethod(method) {
-            document.getElementById('metodo_pago').value = method;
-            document.querySelectorAll('.opcion-pago').forEach(button => {
-                button.classList.toggle('pago-activo', button.dataset.payment === method);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.item-producto').forEach(setupProductRow);
-            document.querySelector('.boton-agregar-item').addEventListener('click', addProductRow);
-            document.querySelectorAll('.opcion-pago').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    setPaymentMethod(button.dataset.payment);
-                });
-            });
-            document.getElementById('view-ticket').addEventListener('click', (event) => {
-                event.preventDefault();
-                renderTicket();
-                location.hash = '#s-ticket';
-            });
-            document.getElementById('submit-sale').addEventListener('click', (event) => {
-                event.preventDefault();
-                const rows = document.querySelectorAll('.item-producto');
-                const valid = Array.from(rows).some(row => row.querySelector('.tipo-producto').value);
-                if (!valid) {
-                    alert('Seleccione al menos un producto antes de registrar la venta.');
-                    location.hash = '#s-venta';
-                    return;
-                }
-                document.getElementById('sale-form').submit();
-            });
-            recalculateTotal();
-            setPaymentMethod('EFECTIVO');
-            <?php if ($ventaConfirmada): ?>
-                location.hash = '#s-conf';
-            <?php endif; ?>
-        });
+        window.EMPLEADO_BOOT = {
+            accesoriosData: <?= json_encode($accesorios) ?>,
+            LOW_STOCK_THRESHOLD: 3,
+            ventaConfirmada: <?= $ventaConfirmada ? 'true' : 'false' ?>
+        };
     </script>
+    <script src="empleado.js"></script>
 </body>
 
 </html>

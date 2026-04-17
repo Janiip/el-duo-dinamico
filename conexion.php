@@ -17,6 +17,16 @@ if ($conexion->connect_errno) {
 // Opcional: establecer codificación UTF-8
 $conexion->set_charset('utf8');
 
+// Asegura compatibilidad para guardar sabores elegidos en el ticket.
+// Si la columna no existe aún, la crea (se ejecuta una sola vez).
+if ($result = $conexion->query("SHOW COLUMNS FROM detalle_ventas LIKE 'sabores'")) {
+    if ($result->num_rows === 0) {
+        // NULLable para no romper ventas viejas.
+        $conexion->query("ALTER TABLE detalle_ventas ADD COLUMN sabores TEXT NULL AFTER id_accesorio");
+    }
+    $result->free();
+}
+
 // Ejemplo de uso:
 // include 'conexion.php';
 // $resultado = $conexion->query("SELECT * FROM usuarios");
