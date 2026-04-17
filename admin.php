@@ -75,6 +75,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Error interno al preparar la consulta de accesorios.';
             }
         }
+    } elseif (isset($_POST['submit_section_rename'])) {
+        $oldSection = trim($_POST['old_section'] ?? '');
+        $newSection = trim($_POST['new_section'] ?? '');
+
+        if ($oldSection === '' || $newSection === '') {
+            $error = 'Complete el nombre antiguo y el nuevo de la sección.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE sabores SET tipo = ? WHERE tipo = ? AND estado = \'ACTIVO\'');
+            if ($stmt) {
+                $stmt->bind_param('ss', $newSection, $oldSection);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Sección renombrada correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al renombrar la sección: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar el renombrado de sección.';
+            }
+        }
+    } elseif (isset($_POST['submit_section_delete'])) {
+        $oldSection = trim($_POST['section_delete'] ?? '');
+
+        if ($oldSection === '') {
+            $error = 'Seleccione una sección para eliminar.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE sabores SET estado = \'INACTIVO\' WHERE tipo = ? AND estado = \'ACTIVO\'');
+            if ($stmt) {
+                $stmt->bind_param('s', $oldSection);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Sección eliminada correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al eliminar la sección: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la eliminación de sección.';
+            }
+        }
+    } elseif (isset($_POST['submit_sabor_edit'])) {
+        $id = intval($_POST['sabor_id'] ?? 0);
+        $nombre = trim($_POST['nombre_sabor_edit'] ?? '');
+        $tipo = trim($_POST['tipo_sabor_edit'] ?? '');
+        $precio = floatval($_POST['precio_sabor_edit'] ?? 0);
+        $stock = floatval($_POST['stock_sabor_edit'] ?? 0);
+
+        if ($id <= 0 || $nombre === '' || $tipo === '' || $precio <= 0 || $stock < 0) {
+            $error = 'Complete correctamente el nombre, tipo, precio y stock del sabor.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE sabores SET nombre = ?, tipo = ?, precio = ?, stock_actual = ? WHERE id_sabor = ? AND estado = \'ACTIVO\'');
+            if ($stmt) {
+                $stmt->bind_param('ssdii', $nombre, $tipo, $precio, $stock, $id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Sabor actualizado correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al actualizar el sabor: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la actualización del sabor.';
+            }
+        }
+    } elseif (isset($_POST['submit_sabor_delete'])) {
+        $id = intval($_POST['sabor_id_delete'] ?? 0);
+
+        if ($id <= 0) {
+            $error = 'No se indicó el sabor a eliminar.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE sabores SET estado = \'INACTIVO\' WHERE id_sabor = ?');
+            if ($stmt) {
+                $stmt->bind_param('i', $id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Sabor eliminado correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al eliminar el sabor: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la eliminación del sabor.';
+            }
+        }
+    } elseif (isset($_POST['submit_sabor_activate'])) {
+        $id = intval($_POST['sabor_id_activate'] ?? 0);
+
+        if ($id <= 0) {
+            $error = 'No se indicó el sabor a activar.';
+        } else {
+            $stmt = $conexion->prepare('UPDATE sabores SET estado = \'ACTIVO\' WHERE id_sabor = ?');
+            if ($stmt) {
+                $stmt->bind_param('i', $id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Sabor activado correctamente.'));
+                    exit;
+                } else {
+                    $error = 'Error al activar el sabor: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la activación del sabor.';
+            }
+        }
     }
 }
 
@@ -84,6 +194,7 @@ function fetchRows($conexion, $sql) {
 }
 
 $sabores = fetchRows($conexion, 'SELECT id_sabor AS id, nombre, tipo, precio, stock_actual FROM sabores WHERE estado = \'ACTIVO\' ORDER BY tipo, nombre');
+$sabores_inactivos = fetchRows($conexion, 'SELECT id_sabor AS id, nombre, tipo, precio, stock_actual FROM sabores WHERE estado = \'INACTIVO\' ORDER BY tipo, nombre');
 $sabores_categorias = fetchRows($conexion, 'SELECT DISTINCT tipo FROM sabores WHERE estado = \'ACTIVO\' ORDER BY tipo');
 $accesorios = fetchRows($conexion, 'SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = \'ACTIVO\' ORDER BY nombre');
 $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario ORDER BY v.fecha DESC LIMIT 20');
@@ -162,7 +273,8 @@ foreach ($ventas as $v) {
                 <div class="estadistica">🔢 Última venta del día: <span>#<?= sanitize($numeroUltimaVenta) ?></span></div>
                 <div class="estadistica">⚠️ Sabores stock bajo (&lt;3L): <span><?= sanitize($stockBajo) ?></span></div>
                 <div class="estadistica">❌ Sabores sin stock: <span><?= sanitize($sinStock) ?></span></div>
-                <div class="estadistica">📦 Total ventas registradas: <span><?= sanitize($totalVentasRegistradas) ?></span></div>
+                <div class="estadistica">� Sabores inactivos: <span><?= sanitize(count($sabores_inactivos)) ?></span></div>
+                <div class="estadistica">�📦 Total ventas registradas: <span><?= sanitize($totalVentasRegistradas) ?></span></div>
             </div>
         </div>
     </div>
@@ -181,7 +293,29 @@ foreach ($ventas as $v) {
         <div class="contenido">
             <div class="barra">
                 <div class="titulo-pagina flex-1 no-mb">SABORES</div>
-                <a class="boton boton-secundario boton-pequeno" >⚙️ EDITAR SECCIONES</a>
+                <button id="edit-sections-button" type="button" class="boton boton-secundario boton-pequeno">⚙️ EDITAR SECCIONES</button>
+            </div>
+
+            <div id="section-manager" style="display:none; margin: 16px 0; padding: 14px; border: 1px solid #cacaca; border-radius: 12px; background: #f7f7f7;">
+                <div style="font-weight:700; margin-bottom:10px;">Administrar secciones de sabores</div>
+                <?php if (count($sabores_categorias) === 0): ?>
+                    <div style="padding:10px; background:#fff; border:1px solid #ddd; border-radius:8px;">No hay secciones registradas.</div>
+                <?php else: ?>
+                    <?php foreach ($sabores_categorias as $categoria): ?>
+                        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:10px;">
+                            <div style="min-width:160px; font-weight:600;"><?= sanitize($categoria['tipo']) ?></div>
+                            <form method="post" style="display:flex; gap:8px; align-items:center; flex:1; min-width:260px;">
+                                <input type="hidden" name="old_section" value="<?= sanitize($categoria['tipo']) ?>">
+                                <input type="text" name="new_section" placeholder="Nuevo nombre" style="flex:1; padding:8px; border:1px solid #bbb; border-radius:8px;">
+                                <button type="submit" name="submit_section_rename" class="boton boton-pequeno">Renombrar</button>
+                            </form>
+                            <form method="post" onsubmit="return confirm('¿Eliminar la sección <?= sanitize($categoria['tipo']) ?> y todos sus sabores?');">
+                                <input type="hidden" name="section_delete" value="<?= sanitize($categoria['tipo']) ?>">
+                                <button type="submit" name="submit_section_delete" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
 
             <div style="margin: 16px 0; padding: 14px; border: 1px solid #ddd; border-radius: 12px; background: #fbfbfb;">
@@ -207,13 +341,13 @@ foreach ($ventas as $v) {
                 </form>
             </div>
 
-            <div class="pestanas-categoria">
-                <span class="pestana-categoria activo">Chocolates</span>
-                <span class="pestana-categoria">Dulces de leche</span>
-                <span class="pestana-categoria">Frutas al agua</span>
-                <span class="pestana-categoria">Frutas a la crema</span>
-                <span class="pestana-categoria">Cremas</span>
-                <span class="pestana-categoria">Cremas especiales</span>
+            <div class="pestanas-categoria" id="sabores-tabs">
+                <?php if (count($sabores_categorias) > 1): ?>
+                    <span class="pestana-categoria activo" data-section="all">Todos</span>
+                <?php endif; ?>
+                <?php foreach ($sabores_categorias as $categoria): ?>
+                    <span class="pestana-categoria" data-section="<?= sanitize($categoria['tipo']) ?>"><?= sanitize($categoria['tipo']) ?></span>
+                <?php endforeach; ?>
             </div>
 
             <div class="envoltorio-tabla">
@@ -221,6 +355,7 @@ foreach ($ventas as $v) {
                     <thead>
                         <tr>
                             <th>NOMBRE</th>
+                            <th>TIPO</th>
                             <th>PRECIO/LITRO</th>
                             <th>STOCK (L)</th>
                             <th>EDITAR</th>
@@ -230,22 +365,103 @@ foreach ($ventas as $v) {
                     <tbody>
                         <?php if (count($sabores) === 0): ?>
                             <tr>
-                                <td colspan="5" style="text-align:center; padding:18px 0;">No hay sabores registrados aun.</td>
+                                <td colspan="6" style="text-align:center; padding:18px 0;">No hay sabores registrados aun.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($sabores as $sabor): ?>
-                                <tr>
+                                <tr data-section="<?= sanitize($sabor['tipo']) ?>" data-id="<?= sanitize($sabor['id']) ?>" data-nombre="<?= sanitize($sabor['nombre']) ?>" data-tipo="<?= sanitize($sabor['tipo']) ?>" data-precio="<?= sanitize($sabor['precio']) ?>" data-stock="<?= sanitize($sabor['stock_actual']) ?>">
                                     <td><?= sanitize($sabor['nombre']) ?></td>
+                                    <td><?= sanitize($sabor['tipo']) ?></td>
                                     <td><?= formatMoney($sabor['precio']) ?></td>
                                     <td><?= sanitize($sabor['stock_actual']) ?> L</td>
-                                    <td><button class="boton-en-linea">✏️</button></td>
-                                    <td><button class="boton-en-linea">🗑️</button></td>
+                                    <td><button type="button" class="boton-en-linea edit-sabor-btn">✏️</button></td>
+                                    <td><button type="button" class="boton-en-linea delete-sabor-btn">🗑️</button></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
+
+            <div style="margin-top:24px; padding:16px; border:1px solid #ddd; border-radius:14px; background:#f7f7f7;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:10px;">
+                    <div style="font-weight:700;">Sabores inactivos (<?= sanitize(count($sabores_inactivos)) ?>)</div>
+                    <button type="button" id="toggle-inactive-flavors" class="boton boton-secundario boton-pequeno">Mostrar/Ocultar</button>
+                </div>
+                <div id="inactive-flavor-section" style="display:none;">
+                    <div class="envoltorio-tabla">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>NOMBRE</th>
+                                    <th>TIPO</th>
+                                    <th>PRECIO/LITRO</th>
+                                    <th>STOCK (L)</th>
+                                    <th>ACTIVAR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (count($sabores_inactivos) === 0): ?>
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; padding:18px 0;">No hay sabores inactivos.</td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($sabores_inactivos as $sabor): ?>
+                                        <tr>
+                                            <td><?= sanitize($sabor['nombre']) ?></td>
+                                            <td><?= sanitize($sabor['tipo']) ?></td>
+                                            <td><?= formatMoney($sabor['precio']) ?></td>
+                                            <td><?= sanitize($sabor['stock_actual']) ?> L</td>
+                                            <td>
+                                                <form method="post" style="margin:0; display:inline;">
+                                                    <input type="hidden" name="submit_sabor_activate" value="1">
+                                                    <input type="hidden" name="sabor_id_activate" value="<?= sanitize($sabor['id']) ?>">
+                                                    <button type="submit" class="boton boton-agregar boton-pequeno">ACTIVAR</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="edit-sabor-panel" style="display:none; margin-top:20px; padding:16px; border:1px solid #ccc; border-radius:14px; background:#fff; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <div style="font-weight:700; font-size:1rem;">Editar sabor</div>
+                    <button type="button" id="cancel-edit-sabor" class="boton boton-secundario boton-pequeno">CERRAR</button>
+                </div>
+                <form id="flavor-edit-form" method="post" style="display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+                    <input type="hidden" name="submit_sabor_edit" value="1">
+                    <input type="hidden" name="sabor_id" id="edit-sabor-id">
+                    <label style="display:block;">
+                        Nombre<br>
+                        <input type="text" name="nombre_sabor_edit" id="edit-sabor-nombre" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
+                    </label>
+                    <label style="display:block;">
+                        Tipo<br>
+                        <input type="text" name="tipo_sabor_edit" id="edit-sabor-tipo" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
+                    </label>
+                    <label style="display:block;">
+                        Precio/L<br>
+                        <input type="number" step="0.01" min="0" name="precio_sabor_edit" id="edit-sabor-precio" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
+                    </label>
+                    <label style="display:block;">
+                        Stock (L)<br>
+                        <input type="number" step="0.1" min="0" name="stock_sabor_edit" id="edit-sabor-stock" required style="width:100%; padding:9px; border:1px solid #bbb; border-radius:10px;">
+                    </label>
+                    <div style="grid-column:1 / -1; display:flex; gap:10px; justify-content:flex-end;">
+                        <button type="submit" class="boton boton-agregar">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+
+            <form id="flavor-delete-form" method="post" style="display:none;">
+                <input type="hidden" name="submit_sabor_delete" value="1">
+                <input type="hidden" name="sabor_id_delete" id="delete-sabor-id">
+            </form>
         </div>
     </div>
 
@@ -438,9 +654,9 @@ foreach ($ventas as $v) {
         <div class="contenido">
             <div class="titulo-pagina">HISTORIAL DE VENTAS</div>
             <div class="fila-flexible">
-                <input class="buscador" type="text" placeholder="🔍 Buscar empleado...">
-                <input class="buscador maxw-175" type="date">
-                <button class="boton boton-secundario boton-limpiar">✕ LIMPIAR</button>
+                <input id="search-ventas" class="buscador" type="text" placeholder="🔍 Buscar venta, empleado, pago...">
+                <input id="filter-fecha" class="buscador maxw-175" type="date">
+                <button id="clear-ventas-filters" type="button" class="boton boton-secundario boton-limpiar">✕ LIMPIAR</button>
             </div>
             <div class="envoltorio-tabla-oscuro">
                 <table>
@@ -586,58 +802,7 @@ foreach ($ventas as $v) {
         </div>
     </div>
 
-    <script>
-        function updateStockTabs() {
-            const sabRadio = document.getElementById('stk-tab-sab');
-            const accRadio = document.getElementById('stk-tab-acc');
-            const sabSection = document.getElementById('stk-sab');
-            const accSection = document.getElementById('stk-acc');
-            const sabLabel = document.querySelector('label[for="stk-tab-sab"]');
-            const accLabel = document.querySelector('label[for="stk-tab-acc"]');
-
-            if (sabRadio.checked) {
-                sabSection.style.display = 'block';
-                accSection.style.display = 'none';
-                sabLabel.classList.add('activo');
-                accLabel.classList.remove('activo');
-            } else {
-                sabSection.style.display = 'none';
-                accSection.style.display = 'block';
-                sabLabel.classList.remove('activo');
-                accLabel.classList.add('activo');
-            }
-        }
-
-        function filterSabores() {
-            const select = document.getElementById('stock-category-filter');
-            const search = document.getElementById('search-sabores');
-            const category = select.value.toLowerCase();
-            const query = search.value.trim().toLowerCase();
-            const rows = document.querySelectorAll('#stk-sab tbody tr');
-
-            rows.forEach(row => {
-                const name = row.cells[0]?.textContent.toLowerCase() || '';
-                const type = row.dataset.categoria?.toLowerCase() || '';
-                const matchesCategory = !category || type === category;
-                const matchesSearch = !query || name.includes(query) || type.includes(query);
-                row.style.display = matchesCategory && matchesSearch ? '' : 'none';
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const sabRadio = document.getElementById('stk-tab-sab');
-            const accRadio = document.getElementById('stk-tab-acc');
-            const select = document.getElementById('stock-category-filter');
-            const search = document.getElementById('search-sabores');
-
-            sabRadio.addEventListener('change', updateStockTabs);
-            accRadio.addEventListener('change', updateStockTabs);
-            select.addEventListener('change', filterSabores);
-            search.addEventListener('input', filterSabores);
-            updateStockTabs();
-            filterSabores();
-        });
-    </script>
+    <script src="admin.js"></script>
 
 </body>
 
