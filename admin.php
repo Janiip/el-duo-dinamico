@@ -411,8 +411,8 @@ foreach ($ventas as $v) {
                 <div class="estadistica">🔢 Última venta del día: <span>#<?= sanitize($numeroUltimaVenta) ?></span></div>
                 <div class="estadistica">⚠️ Sabores stock bajo (&lt;3L): <span><?= sanitize($stockBajo) ?></span></div>
                 <div class="estadistica">❌ Sabores sin stock: <span><?= sanitize($sinStock) ?></span></div>
-                <div class="estadistica">� Sabores inactivos: <span><?= sanitize(count($sabores_inactivos)) ?></span></div>
-                <div class="estadistica">�📦 Total ventas registradas: <span><?= sanitize($totalVentasRegistradas) ?></span></div>
+                <div class="estadistica">🍧❌ Sabores inactivos: <span><?= sanitize(count($sabores_inactivos)) ?></span></div>
+                <div class="estadistica">📦 Total ventas registradas: <span><?= sanitize($totalVentasRegistradas) ?></span></div>
             </div>
         </div>
     </div>
@@ -432,6 +432,7 @@ foreach ($ventas as $v) {
             <div class="barra">
                 <div class="titulo-pagina flex-1 no-mb">SABORES</div>
                 <button id="edit-sections-button" type="button" class="boton boton-secundario boton-pequeno">⚙️ EDITAR SECCIONES</button>
+                <button type="button" id="open-add-sabor-modal" class="boton boton-agregar boton-pequeno">+ Agregar SABOR</button>
             </div>
 
             <div id="section-manager" class="modal-overlay" style="display:none;">
@@ -459,11 +460,6 @@ foreach ($ventas as $v) {
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
-            </div>
-
-            <div style="margin: 16px 0; padding: 14px; border: 1px solid #ddd; border-radius: 12px; background: #fbfbfb;">
-                <div style="font-weight:700; margin-bottom:8px;">Agregar sabor nuevo</div>
-                <button type="button" id="open-add-sabor-modal" class="boton boton-agregar">+ Agregar SABOR</button>
             </div>
 
             <div id="add-sabor-modal" class="modal-overlay" style="display:none;">
@@ -660,10 +656,7 @@ foreach ($ventas as $v) {
         <div class="contenido">
             <div class="barra">
                 <div class="titulo-pagina flex-1 no-mb">ACCESORIOS</div>
-            </div>
-            <div style="margin: 16px 0; padding: 14px; border: 1px solid #ddd; border-radius: 12px; background: #fbfbfb;">
-                <div style="font-weight:700; margin-bottom:8px;">Agregar accesorio nuevo</div>
-                <button type="button" id="open-add-accesorio-modal" class="boton boton-agregar">+ Agregar ACCESORIO</button>
+                <button type="button" id="open-add-accesorio-modal" class="boton boton-agregar boton-pequeno">+ Agregar ACCESORIO</button>
             </div>
 
             <div id="add-accesorio-modal" class="modal-overlay" style="display:none;">

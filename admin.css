@@ -31,7 +31,6 @@ body {
     flex-direction: column;
 }
 
-/* Panel es la página de inicio */
 .pantalla:target,
 body:not(:has(.pantalla:target)) #s-panel {
     display: flex;
@@ -109,30 +108,11 @@ body:not(:has(.pantalla:target)) #s-panel {
     color: var(--texto);
 }
 
-.boton-granate {
-    background: var(--granate);
-    color: var(--blanco);
-}
-
-.boton-salmon {
-    background: var(--salmon-light);
-    color: var(--texto);
-}
-
-.boton-rojo {
-    background: var(--rojo);
-    color: var(--blanco);
-}
-
 .boton-volver {
     background: var(--dorado);
     color: var(--texto);
     font-size: .76rem;
     padding: 7px 16px;
-}
-
-.boton-pequeno {
-    font-size: .76rem;
 }
 
 .boton-ventas {
@@ -143,6 +123,22 @@ body:not(:has(.pantalla:target)) #s-panel {
 .boton-cerrar {
     background: var(--rojo);
     color: var(--blanco);
+}
+
+.boton-agregar {
+    background: var(--granate);
+    color: var(--blanco);
+}
+
+.boton-secundario {
+    background: var(--lavanda);
+    color: var(--texto);
+    border: 1px solid rgba(122, 16, 32, .25);
+}
+
+.boton-pequeno {
+    font-size: .76rem;
+    padding: 7px 14px;
 }
 
 /* ── CONTENIDO ── */
@@ -261,7 +257,7 @@ tr:hover td {
 }
 
 /* ── BADGES ── */
-.insignia {
+.badge {
     display: inline-block;
     padding: 3px 10px;
     border-radius: 20px;
@@ -269,7 +265,7 @@ tr:hover td {
     font-weight: 800;
 }
 
-.insignia-ok {
+.insignia-normal {
     background: #c8f0c8;
     color: #2e7d32;
 }
@@ -279,12 +275,12 @@ tr:hover td {
     color: #e65100;
 }
 
-.insignia-no {
+.insignia-sin-stock {
     background: #ffcdd2;
     color: #b71c1c;
 }
 
-/* ── CAT TABS ── */
+/* ── CAT TABS (sabores) ── */
 .pestanas-categoria {
     display: flex;
     gap: 6px;
@@ -305,11 +301,11 @@ tr:hover td {
     text-decoration: none;
     display: inline-block;
     color: var(--texto);
+    cursor: pointer;
     transition: all .15s;
 }
 
-.pestana-categoria.activo,
-.pestana-categoria:target {
+.pestana-categoria.activo {
     background: var(--granate);
     color: var(--blanco);
 }
@@ -383,7 +379,7 @@ tr:hover td {
     border-color: var(--granate);
 }
 
-/* ── HISTORIAL ── */
+/* ── HISTORIAL FILTROS ── */
 .fila-flexible {
     display: flex;
     gap: 8px;
@@ -400,7 +396,7 @@ tr:hover td {
     font-size: .74rem;
 }
 
-/* ── DETALLE ── */
+/* ── DETALLE DE VENTA ── */
 .tarjeta-detalle {
     background: var(--salmon-light);
     border-radius: 18px;
@@ -409,12 +405,12 @@ tr:hover td {
     margin: 0 auto;
 }
 
-.informacion-detalle {
+.info-detalle {
     margin-bottom: 9px;
     font-weight: 700;
 }
 
-.informacion-detalle span {
+.info-detalle span {
     color: var(--granate);
     font-weight: 800;
 }
@@ -434,7 +430,7 @@ tr:hover td {
     background: rgba(0, 0, 0, .08);
 }
 
-/* ── TABS DE STOCK (radio hack) ── */
+/* ── STOCK TABS (radio + JS) ── */
 .radio-stock {
     display: none;
 }
@@ -442,7 +438,6 @@ tr:hover td {
 .envoltorio-pestanas-stock {
     display: flex;
     gap: 6px;
-    margin-bottom: 14px;
     flex-wrap: wrap;
 }
 
@@ -460,25 +455,21 @@ tr:hover td {
     transition: all .15s;
 }
 
-#stk-tab-sab:checked~.stock-contenido .etiqueta-pestana-stock[for="stk-tab-sab"],
-#stk-tab-acc:checked~.stock-contenido .etiqueta-pestana-stock[for="stk-tab-acc"] {
+.etiqueta-pestana-stock.activo {
     background: var(--granate);
     color: var(--blanco);
+    border-color: var(--granate-dark);
+}
+
+.contenido-stock {
+    /* contenedor de las tabs y secciones de stock */
 }
 
 .seccion-stock {
     display: none;
 }
 
-#stk-tab-sab:checked~.stock-contenido #stk-sab {
-    display: block;
-}
-
-#stk-tab-acc:checked~.stock-contenido #stk-acc {
-    display: block;
-}
-
-/* ── MODAL DE AGREGAR SABOR ── */
+/* ── MODAL ── */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -508,31 +499,6 @@ tr:hover td {
     letter-spacing: 1px;
 }
 
-#add-sabor-form label input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-#flavor-edit-form label input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-#add-accesorio-form label input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-#accesorio-edit-form label input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-#edit-stock-form label input {
-    width: 100%;
-    box-sizing: border-box;
-}
-
 @media(max-width:600px) {
     .contenido {
         padding: 13px;
@@ -548,39 +514,4 @@ tr:hover td {
         font-size: .76rem;
         padding: 7px 11px;
     }
-}
-
-/* ═══════════════ CSS :target para stock tabs ═══════════════ */
-/* Por defecto muestra sabores */
-#stk-sab {
-    display: block;
-}
-
-#stk-tab-sab:checked~.stock-contenido #stk-sab {
-    display: block;
-}
-
-#stk-tab-acc:checked~.stock-contenido #stk-acc {
-    display: block;
-}
-
-#stk-tab-acc:checked~.stock-contenido #stk-sab {
-    display: none;
-}
-
-#stk-tab-sab:checked~.stock-contenido #stk-acc {
-    display: none;
-}
-
-/* Label activo */
-#stk-tab-sab:checked~.stock-contenido label[for="stk-tab-sab"],
-#stk-tab-acc:checked~.stock-contenido label[for="stk-tab-acc"] {
-    background: var(--granate);
-    color: var(--blanco);
-    border-color: var(--granate-dark);
-}
-
-/* Fallback: si ningún target está activo, muestra #s-panel */
-body:not(:has(.pantalla:target)) #s-panel {
-    display: flex;
 }
