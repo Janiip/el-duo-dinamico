@@ -528,6 +528,11 @@ tr:hover td {
     box-sizing: border-box;
 }
 
+#edit-stock-form label input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 @media(max-width:600px) {
     .contenido {
         padding: 13px;

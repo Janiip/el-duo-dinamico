@@ -347,6 +347,68 @@ function handleAccesorioDeleteButtons() {
     });
 }
 
+function setupStockEditModal() {
+    const modal = document.getElementById('edit-stock-modal');
+    const closeButton = document.getElementById('close-edit-stock-modal');
+    const cancelButton = document.getElementById('cancel-edit-stock');
+    const form = document.getElementById('edit-stock-form');
+    const kindInput = document.getElementById('edit-stock-kind');
+    const idInput = document.getElementById('edit-stock-item-id');
+    const cantidadInput = document.getElementById('edit-stock-cantidad');
+    const titleEl = document.getElementById('edit-stock-modal-title');
+    const labelProduct = document.getElementById('edit-stock-product-label');
+    const labelText = document.getElementById('edit-stock-label-text');
+
+    if (!modal || !form || !kindInput || !idInput || !cantidadInput) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    if (closeButton) closeButton.addEventListener('click', closeModal);
+    if (cancelButton) cancelButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+    });
+
+    const openForSabor = (row) => {
+        kindInput.value = 'sabor';
+        idInput.value = row.dataset.id || '';
+        cantidadInput.value = row.dataset.stock || '0';
+        cantidadInput.step = '0.1';
+        cantidadInput.min = '0';
+        if (titleEl) titleEl.textContent = 'Editar stock (sabor)';
+        if (labelText) labelText.textContent = 'Stock (litros)';
+        if (labelProduct) labelProduct.textContent = row.dataset.nombre || '';
+        modal.style.display = 'flex';
+    };
+
+    const openForAccesorio = (row) => {
+        kindInput.value = 'accesorio';
+        idInput.value = row.dataset.id || '';
+        cantidadInput.value = row.dataset.stock || '0';
+        cantidadInput.step = '1';
+        cantidadInput.min = '0';
+        if (titleEl) titleEl.textContent = 'Editar stock (accesorio)';
+        if (labelText) labelText.textContent = 'Stock (unidades)';
+        if (labelProduct) labelProduct.textContent = row.dataset.nombre || '';
+        modal.style.display = 'flex';
+    };
+
+    document.querySelectorAll('.edit-stock-sabor-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row = btn.closest('tr');
+            if (row) openForSabor(row);
+        });
+    });
+    document.querySelectorAll('.edit-stock-accesorio-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row = btn.closest('tr');
+            if (row) openForAccesorio(row);
+        });
+    });
+}
+
 function setupSectionManagerModal() {
     const openButton = document.getElementById('edit-sections-button');
     const modal = document.getElementById('section-manager');
@@ -374,6 +436,10 @@ function setupSectionManagerModal() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    if (new URLSearchParams(window.location.search).get('focus') === 'stock') {
+        window.location.hash = '#s-stock';
+    }
+
     const sabRadio = document.getElementById('stk-tab-sab');
     const accRadio = document.getElementById('stk-tab-acc');
     const select = document.getElementById('stock-category-filter');
@@ -419,5 +485,6 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleInactiveAccesorioSection();
     setupAddFlavorModal();
     setupAddAccesorioModal();
+    setupStockEditModal();
     setupSectionManagerModal();
 });

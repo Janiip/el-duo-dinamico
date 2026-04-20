@@ -252,6 +252,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Error interno al preparar la activación del sabor.';
             }
         }
+    } elseif (isset($_POST['submit_stock_quick'])) {
+        $kind = $_POST['stock_kind'] ?? '';
+        $id = intval($_POST['stock_item_id'] ?? 0);
+
+        if ($kind === 'sabor') {
+            $stock = floatval($_POST['stock_cantidad'] ?? -1);
+            if ($id <= 0 || $stock < 0) {
+                $error = 'Indicá un stock válido para el sabor.';
+            } else {
+                $stmt = $conexion->prepare('UPDATE sabores SET stock_actual = ? WHERE id_sabor = ? AND estado = \'ACTIVO\'');
+                if ($stmt) {
+                    $stmt->bind_param('di', $stock, $id);
+                    if ($stmt->execute()) {
+                        $stmt->close();
+                        header('Location: admin.php?mensaje=' . urlencode('Stock del sabor actualizado.') . '&focus=stock');
+                        exit;
+                    } else {
+                        $error = 'Error al actualizar el stock del sabor: ' . $conexion->error;
+                        $stmt->close();
+                    }
+                } else {
+                    $error = 'Error interno al preparar la actualización de stock (sabor).';
+                }
+            }
+        } elseif ($kind === 'accesorio') {
+            $stock = intval($_POST['stock_cantidad'] ?? -1);
+            if ($id <= 0 || $stock < 0) {
+                $error = 'Indicá un stock válido para el accesorio.';
+            } else {
+                $stmt = $conexion->prepare('UPDATE accesorios SET stock_actual = ? WHERE id_accesorio = ? AND estado = \'ACTIVO\'');
+                if ($stmt) {
+                    $stmt->bind_param('ii', $stock, $id);
+                    if ($stmt->execute()) {
+                        $stmt->close();
+                        header('Location: admin.php?mensaje=' . urlencode('Stock del accesorio actualizado.') . '&focus=stock');
+                        exit;
+                    } else {
+                        $error = 'Error al actualizar el stock del accesorio: ' . $conexion->error;
+                        $stmt->close();
+                    }
+                } else {
+                    $error = 'Error interno al preparar la actualización de stock (accesorio).';
+                }
+            }
+        } else {
+            $error = 'Tipo de producto no válido para actualizar stock.';
+        }
     }
 }
 
@@ -845,12 +892,15 @@ foreach ($ventas as $v) {
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($sabores as $sabor): ?>
-                                        <tr data-categoria="<?= sanitize($sabor['tipo']) ?>">
+                                        <tr data-categoria="<?= sanitize($sabor['tipo']) ?>"
+                                            data-id="<?= sanitize($sabor['id']) ?>"
+                                            data-nombre="<?= sanitize($sabor['nombre']) ?>"
+                                            data-stock="<?= sanitize($sabor['stock_actual']) ?>">
                                             <td><?= sanitize($sabor['nombre']) ?></td>
                                             <td><?= sanitize($sabor['tipo']) ?></td>
                                             <td><?= sanitize($sabor['stock_actual']) ?> L</td>
                                             <td><?= badgeStock($sabor['stock_actual']) ?></td>
-                                            <td><button class="boton-en-linea">✏️</button></td>
+                                            <td><button type="button" class="boton-en-linea edit-stock-sabor-btn">✏️</button></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -878,18 +928,43 @@ foreach ($ventas as $v) {
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($accesorios as $accesorio): ?>
-                                        <tr>
+                                        <tr data-id="<?= sanitize($accesorio['id']) ?>"
+                                            data-nombre="<?= sanitize($accesorio['nombre']) ?>"
+                                            data-stock="<?= sanitize($accesorio['stock_actual']) ?>">
                                             <td><?= sanitize($accesorio['nombre']) ?></td>
                                             <td><?= sanitize($accesorio['descripcion']) ?></td>
                                             <td><?= sanitize($accesorio['stock_actual']) ?></td>
                                             <td><?= badgeStock($accesorio['stock_actual']) ?></td>
-                                            <td><button class="boton-en-linea">✏️</button></td>
+                                            <td><button type="button" class="boton-en-linea edit-stock-accesorio-btn">✏️</button></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <div id="edit-stock-modal" class="modal-overlay" style="display:none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div id="edit-stock-modal-title">Editar stock</div>
+                        <button type="button" id="close-edit-stock-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                    </div>
+                    <form id="edit-stock-form" method="post" style="display:grid; gap:12px;">
+                        <input type="hidden" name="submit_stock_quick" value="1">
+                        <input type="hidden" name="stock_kind" id="edit-stock-kind" value="">
+                        <input type="hidden" name="stock_item_id" id="edit-stock-item-id" value="">
+                        <div id="edit-stock-product-label" style="font-weight:800; color:var(--granate);"></div>
+                        <label style="display:block;">
+                            <span id="edit-stock-label-text">Cantidad</span><br>
+                            <input type="number" name="stock_cantidad" id="edit-stock-cantidad" min="0" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                            <button type="button" id="cancel-edit-stock" class="boton boton-secundario boton-pequeno">Cancelar</button>
+                            <button type="submit" class="boton boton-agregar">Guardar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
