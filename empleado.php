@@ -186,6 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
 }
 
 $sabores = fetchRows($conexion, "SELECT id_sabor AS id, nombre, tipo, precio, stock_actual FROM sabores WHERE estado = 'ACTIVO' ORDER BY tipo, nombre");
+$sabores_inactivos = fetchRows($conexion, "SELECT id_sabor AS id, nombre, tipo FROM sabores WHERE estado = 'INACTIVO' ORDER BY tipo, nombre");
 $accesorios = fetchRows($conexion, "SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = 'ACTIVO' ORDER BY nombre");
 $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario WHERE v.id_empleado = ' . intval($empleadoId) . ' ORDER BY v.fecha DESC LIMIT 20');
 
@@ -293,6 +294,19 @@ if ($ventaDetalleId > 0) {
                                     <?php endforeach; ?>
                                 </div>
                                 <div class="sabores-seleccionados" style="display:none;"></div>
+                                <?php if (count($sabores_inactivos) > 0): ?>
+                                    <button type="button" class="boton-ver-inactivos">Ver sabores inactivos (<?= count($sabores_inactivos) ?>)</button>
+                                    <div class="sabores-inactivos-lista" style="display:none;">
+                                        <div class="titulo-sabores" style="margin-top:8px; color:#b71c1c;">SABORES INACTIVOS</div>
+                                        <div class="pestanas-categoria-sabores" style="gap:6px;">
+                                            <?php foreach ($sabores_inactivos as $s): ?>
+                                                <span class="ficha ficha-inactivo" title="INACTIVO">
+                                                    <?= sanitize($s['nombre']) ?> (<?= sanitize($s['tipo']) ?>)
+                                                </span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="fila-venta">

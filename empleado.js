@@ -89,6 +89,18 @@
       });
     });
     updateFlavorInputs(row);
+
+    const toggleBtn = row.querySelector('.boton-ver-inactivos');
+    const listaInactivos = row.querySelector('.sabores-inactivos-lista');
+    if (toggleBtn && listaInactivos) {
+      const label = toggleBtn.textContent.trim();
+      toggleBtn.addEventListener('click', () => {
+        const abierto = listaInactivos.style.display === 'block';
+        listaInactivos.style.display = abierto ? 'none' : 'block';
+        toggleBtn.textContent = (abierto ? '▼ ' : '▲ ') + label;
+      });
+      toggleBtn.textContent = '▼ ' + label;
+    }
   }
 
   function setupProductRow(row) {

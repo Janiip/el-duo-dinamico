@@ -102,29 +102,19 @@ body:not(:has(.pantalla:target)) #s-emp {
     box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
 }
 
-.boton-dorado {
-    background: var(--dorado);
-    color: var(--texto);
+.boton:active {
+    transform: translateY(0);
 }
 
-.boton-granate {
+.boton-agregar {
     background: var(--granate);
     color: var(--blanco);
 }
 
 .boton-secundario {
-    background: var(--salmon-light);
+    background: var(--lavanda);
     color: var(--texto);
-}
-
-.boton-agregar {
-    background: var(--dorado);
-    color: var(--texto);
-}
-
-.boton-rojo {
-    background: var(--rojo);
-    color: var(--blanco);
+    border: 1px solid rgba(122, 16, 32, .25);
 }
 
 .boton-cerrar {
@@ -251,28 +241,6 @@ body:not(:has(.pantalla:target)) #s-emp {
     padding: 14px;
 }
 
-.encabezado-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.numero-item {
-    background: var(--granate);
-    color: var(--blanco);
-    font-family: 'Fredoka One', cursive;
-    font-size: .82rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-}
-
-.subtotal-item {
-    font-family: 'Fredoka One', cursive;
-    color: var(--granate);
-    font-size: .98rem;
-}
-
 .fila-venta {
     display: flex;
     align-items: center;
@@ -310,12 +278,13 @@ body:not(:has(.pantalla:target)) #s-emp {
     background: var(--dorado);
 }
 
-/* sabores */
+/* ── SABORES ── */
 .envoltorio-sabores {
     background: var(--lavanda);
     border-radius: 12px;
     padding: 10px;
     margin-top: 6px;
+    flex: 1;
 }
 
 .titulo-sabores {
@@ -354,9 +323,39 @@ body:not(:has(.pantalla:target)) #s-emp {
     background: #e0e0e0;
     color: #aaa;
     text-decoration: line-through;
+    cursor: not-allowed;
 }
 
-/* total / pago */
+.ficha-inactivo {
+    background: #ffcdd2;
+    color: #b71c1c;
+    border: 2px solid #ef9a9a;
+    cursor: default;
+    text-decoration: line-through;
+    opacity: .85;
+}
+
+.boton-ver-inactivos {
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: #b71c1c;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: .74rem;
+    cursor: pointer;
+    padding: 4px 2px;
+    letter-spacing: .5px;
+    transition: opacity .15s;
+}
+
+.boton-ver-inactivos:hover {
+    opacity: .7;
+}
+
+
+
+/* ── AGREGAR AL CARRITO / TOTAL / PAGO ── */
 .envoltorio-agregar-carrito {
     max-width: 640px;
     margin: 11px auto 0;
@@ -364,11 +363,6 @@ body:not(:has(.pantalla:target)) #s-emp {
 
 .boton-agregar-item {
     width: 100%;
-    padding: 11px;
-    font-size: .86rem;
-    border-radius: 14px;
-    border: none;
-    cursor: pointer;
 }
 
 .caja-total {
@@ -589,7 +583,7 @@ body:not(:has(.pantalla:target)) #s-emp {
 }
 
 /* ── HISTORIAL ── */
-.frow {
+.fila-flexible {
     display: flex;
     gap: 8px;
     margin-bottom: 13px;
@@ -670,7 +664,7 @@ tr:hover td {
     background: rgba(0, 0, 0, .08);
 }
 
-/* ── DETALLE ── */
+/* ── DETALLE DE VENTA ── */
 .tarjeta-detalle {
     background: var(--salmon-light);
     border-radius: 18px;
