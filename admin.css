@@ -427,7 +427,7 @@ tr:hover td {
 }
 
 .boton-en-linea:hover {
-    background: rgba(0, 0, 0, .08);
+    background: rgba(0, 0, 0, 0.08);
 }
 
 /* ── STOCK TABS (radio + JS) ── */

@@ -267,10 +267,28 @@ if ($ventaDetalleId > 0) {
             <?php if ($error): ?>
                 <div class="mensaje-error" style="margin-bottom:16px; padding:12px 14px; background:#ffebee; color:#b71c1c; border-radius:12px;"><?= sanitize($error) ?></div>
             <?php endif; ?>
-            <form method="post" id="sale-form">
-                <div class="carrito" id="carrito">
-                    <div class="item-venta item-producto" data-index="1">
-                        <div class="fila-venta">
+            <div class="layout-venta">
+                <aside class="panel-sabores-inactivos">
+                    <div class="titulo-sabores">SABORES INACTIVOS</div>
+                    <?php if (count($sabores_inactivos) > 0): ?>
+                        <button type="button" class="boton-ver-inactivos" data-label="Ver sabores inactivos (<?= count($sabores_inactivos) ?>)">Ver sabores inactivos (<?= count($sabores_inactivos) ?>)</button>
+                        <div class="sabores-inactivos-lista" style="display:none;">
+                            <div class="pestanas-categoria-sabores" style="gap:6px;">
+                                <?php foreach ($sabores_inactivos as $s): ?>
+                                    <span class="ficha ficha-inactivo" title="INACTIVO">
+                                        <?= sanitize($s['nombre']) ?> (<?= sanitize($s['tipo']) ?>)
+                                    </span>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="texto-inactivos">No hay sabores inactivos.</div>
+                    <?php endif; ?>
+                </aside>
+                <form method="post" id="sale-form">
+                    <div class="carrito" id="carrito">
+                        <div class="item-venta item-producto" data-index="1">
+                            <div class="fila-venta">
                             <div class="etiqueta-venta">PRODUCTO</div>
                             <select class="entrada-venta tipo-producto" name="producto_id[]">
                                 <option value="">SELECCIONAR</option>
@@ -294,19 +312,6 @@ if ($ventaDetalleId > 0) {
                                     <?php endforeach; ?>
                                 </div>
                                 <div class="sabores-seleccionados" style="display:none;"></div>
-                                <?php if (count($sabores_inactivos) > 0): ?>
-                                    <button type="button" class="boton-ver-inactivos">Ver sabores inactivos (<?= count($sabores_inactivos) ?>)</button>
-                                    <div class="sabores-inactivos-lista" style="display:none;">
-                                        <div class="titulo-sabores" style="margin-top:8px; color:#b71c1c;">SABORES INACTIVOS</div>
-                                        <div class="pestanas-categoria-sabores" style="gap:6px;">
-                                            <?php foreach ($sabores_inactivos as $s): ?>
-                                                <span class="ficha ficha-inactivo" title="INACTIVO">
-                                                    <?= sanitize($s['nombre']) ?> (<?= sanitize($s['tipo']) ?>)
-                                                </span>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="fila-venta">
@@ -339,7 +344,8 @@ if ($ventaDetalleId > 0) {
                 </div>
 
                 <input type="hidden" name="submit_venta" value="1">
-            </form>
+                </form>
+            </div>
 
             <div class="botones-venta">
                 <button type="button" id="view-ticket" class="boton boton-agregar boton-confirmar">VER TICKET</button>
@@ -384,7 +390,7 @@ if ($ventaDetalleId > 0) {
             </div>
             <div class="acciones-ticket">
                 <button type="button" class="boton boton-agregar boton-confirmar" id="submit-sale">CONFIRMAR Y REGISTRAR</button>
-                <a class="boton boton-rojo" href="#s-emp">CANCELAR VENTA</a>
+                <a class="boton boton-secundario" href="#s-emp">CANCELAR VENTA</a>
             </div>
         </div>
     </div>
@@ -409,6 +415,10 @@ if ($ventaDetalleId > 0) {
                 <div class="detalle-confirmacion">Pago: <strong><?= sanitize($metodoPagoConfirmado) ?></strong></div>
                 <div class="botones-confirmacion">
                     <a class="boton boton-agregar" href="#s-venta">NUEVA VENTA</a>
+                    <button type="button" class="boton boton-imprimir" id="reimprimir-conf" title="Reimprimir ticket del cliente">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                        REIMPRIMIR TICKET
+                    </button>
                     <a class="boton boton-secundario" href="#s-historial">VER MIS VENTAS</a>
                 </div>
             </div>
@@ -490,56 +500,93 @@ if ($ventaDetalleId > 0) {
                     No se encontró la venta #<?= sanitize($ventaDetalleId) ?> (o no te pertenece).
                 </div>
             <?php else: ?>
-                <div class="tarjeta-detalle">
-                    <div class="informacion-detalle">Venta del día <span>#<?= sanitize($ventaDetalle['id']) ?></span></div>
-                    <div class="informacion-detalle">Fecha: <span><?= sanitize(date('d/m/Y H:i', strtotime($ventaDetalle['fecha']))) ?></span></div>
-                    <div class="informacion-detalle">Empleado: <span><?= sanitize($ventaDetalle['empleado']) ?></span></div>
-                    <div class="envoltorio-tabla" style="margin:12px 0;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="text-align:left;">PRODUCTO</th>
-                                    <th>CANT.</th>
-                                    <th>PRECIO</th>
-                                    <th>SUBTOTAL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (count($ventaDetalleItems) === 0): ?>
-                                    <tr>
-                                        <td colspan="4" style="text-align:center; padding:18px 0;">
-                                            No hay items registrados para esta venta.<br>
-                                            <small style="color:#8a1c1c; font-weight:800;">
-                                                Se registró el total, pero no se guardó el detalle de productos en la base de datos.
-                                            </small>
-                                        </td>
-                                    </tr>
-                                <?php else: ?>
-                                    <?php foreach ($ventaDetalleItems as $item): ?>
-                                        <?php
-                                            $nombreProducto = $item['accesorio_nombre'] ?: 'Producto';
-                                            $detalleProducto = $item['sabores'] ? $item['sabores'] : ($item['accesorio_descripcion'] ?: '');
-                                        ?>
-                                        <tr>
-                                            <td style="text-align:left;padding:8px 9px;">
-                                                <?= sanitize($nombreProducto) ?>
-                                                <?php if (trim($detalleProducto) !== ''): ?>
-                                                    <br><small style="color:#888;font-style:italic;"><?= sanitize($detalleProducto) ?></small>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td><?= sanitize($item['cantidad']) ?></td>
-                                            <td><?= formatMoney($item['precio_unitario']) ?></td>
-                                            <td><?= formatMoney($item['subtotal']) ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                <div class="envoltorio-tickets">
+                    <div class="caja-ticket">
+                        <div class="etiqueta-ticket etiqueta-empleado">COPIA EMPLEADO</div>
+                        <div class="titulo-ticket">DAJANA HELADOS</div>
+                        <div class="numero-ticket">Venta del día <span>#<?= sanitize($ventaDetalle['id']) ?></span></div>
+                        <div class="fila-ticket"><span>Empleado:</span><span><?= sanitize($ventaDetalle['empleado']) ?></span></div>
+                        <div class="fila-ticket"><span>Fecha:</span><span><?= sanitize(date('d/m/Y H:i', strtotime($ventaDetalle['fecha']))) ?></span></div>
+                        <div id="detalle-items-1">
+                            <?php if (count($ventaDetalleItems) === 0): ?>
+                                <div class="item-ticket">
+                                    <div class="nombre-item-ticket">No hay items registrados para esta venta.</div>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($ventaDetalleItems as $item): ?>
+                                    <?php
+                                        $nombreProducto = $item['accesorio_nombre'] ?: 'Producto';
+                                        $detalleProducto = $item['sabores'] ? $item['sabores'] : ($item['accesorio_descripcion'] ?: '');
+                                    ?>
+                                    <div class="item-ticket">
+                                        <div class="nombre-item-ticket"><?= sanitize($nombreProducto) ?> x<?= sanitize($item['cantidad']) ?> <?= formatMoney($item['precio_unitario']) ?></div>
+                                        <?php if (trim($detalleProducto) !== ''): ?>
+                                            <div class="sabores-item-ticket"><?= sanitize($detalleProducto) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="total-ticket">TOTAL: <span><?= formatMoney($ventaDetalle['total']) ?></span></div>
+                        <div class="fila-ticket" style="margin-top:5px;"><span>Pago:</span><span><?= sanitize($ventaDetalle['pago']) ?></span></div>
                     </div>
-                    <div class="informacion-detalle" style="font-size:1rem;">Total: <span><?= formatMoney($ventaDetalle['total']) ?></span></div>
-                    <div class="informacion-detalle">Pago: <span><?= sanitize($ventaDetalle['pago']) ?></span></div>
+                    <div class="caja-ticket">
+                        <div class="etiqueta-ticket etiqueta-cliente">TICKET CLIENTE</div>
+                        <div class="titulo-ticket">DAJANA HELADOS</div>
+                        <div class="numero-ticket">Orden <span>#<?= sanitize($ventaDetalle['id']) ?></span></div>
+                        <div class="fila-ticket"><span>Fecha:</span><span><?= sanitize(date('d/m/Y H:i', strtotime($ventaDetalle['fecha']))) ?></span></div>
+                        <div id="detalle-items-2">
+                            <?php if (count($ventaDetalleItems) === 0): ?>
+                                <div class="item-ticket">
+                                    <div class="nombre-item-ticket">No hay items registrados para esta venta.</div>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($ventaDetalleItems as $item): ?>
+                                    <?php
+                                        $nombreProducto = $item['accesorio_nombre'] ?: 'Producto';
+                                        $detalleProducto = $item['sabores'] ? $item['sabores'] : ($item['accesorio_descripcion'] ?: '');
+                                    ?>
+                                    <div class="item-ticket">
+                                        <div class="nombre-item-ticket"><?= sanitize($nombreProducto) ?> x<?= sanitize($item['cantidad']) ?> <?= formatMoney($item['precio_unitario']) ?></div>
+                                        <?php if (trim($detalleProducto) !== ''): ?>
+                                            <div class="sabores-item-ticket"><?= sanitize($detalleProducto) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="total-ticket">TOTAL: <span><?= formatMoney($ventaDetalle['total']) ?></span></div>
+                        <div class="fila-ticket" style="margin-top:5px;"><span>Pago:</span><span><?= sanitize($ventaDetalle['pago']) ?></span></div>
+                    </div>
+                </div>
+                <div class="acciones-ticket" style="margin-top:18px;">
+                    <button type="button" class="boton boton-imprimir" id="reimprimir-detalle"
+                        data-orden="<?= sanitize($ventaDetalle['id']) ?>"
+                        data-fecha="<?= sanitize(date('d/m/Y H:i', strtotime($ventaDetalle['fecha']))) ?>"
+                        data-total="<?= sanitize(formatMoney($ventaDetalle['total'])) ?>"
+                        data-pago="<?= sanitize($ventaDetalle['pago']) ?>"
+                        title="Reimprimir ticket del cliente">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                        REIMPRIMIR TICKET CLIENTE
+                    </button>
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- ── OVERLAY DE IMPRESIÓN (solo visible al imprimir) ── -->
+    <div id="print-ticket-overlay" style="display:none;">
+        <div class="ticket-print-wrap">
+            <div class="tp-title">DAJANA HELADOS</div>
+            <div class="tp-sub" id="pt-orden">Orden #—</div>
+            <div class="tp-sub" id="pt-fecha">—</div>
+            <hr class="tp-sep">
+            <div id="pt-items"><!-- items inyectados por JS --></div>
+            <hr class="tp-sep">
+            <div class="tp-total">TOTAL: <span id="pt-total">$0</span></div>
+            <div class="tp-row" style="margin-top:2mm;"><span>Pago:</span><span id="pt-pago">EFECTIVO</span></div>
+            <hr class="tp-sep">
+            <div class="tp-footer">¡Gracias por su compra!<br>Dajana Helados</div>
         </div>
     </div>
 

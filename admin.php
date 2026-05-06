@@ -512,7 +512,7 @@ foreach ($ventas as $v) {
                             <th>PRECIO/LITRO</th>
                             <th>STOCK (L)</th>
                             <th>EDITAR</th>
-                            <th>ELIMINAR</th>
+                            <th>DESACTIVAR</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -528,7 +528,7 @@ foreach ($ventas as $v) {
                                     <td><?= formatMoney($sabor['precio']) ?></td>
                                     <td><?= sanitize($sabor['stock_actual']) ?> L</td>
                                     <td><button type="button" class="boton-en-linea edit-sabor-btn">✏️</button></td>
-                                    <td><button type="button" class="boton-en-linea delete-sabor-btn">🗑️</button></td>
+                                    <td><button type="button" class="boton-en-linea delete-sabor-btn">❌</button></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -569,7 +569,7 @@ foreach ($ventas as $v) {
                                                 <form method="post" style="margin:0; display:inline;">
                                                     <input type="hidden" name="submit_sabor_activate" value="1">
                                                     <input type="hidden" name="sabor_id_activate" value="<?= sanitize($sabor['id']) ?>">
-                                                    <button type="submit" class="boton boton-agregar boton-pequeno">ACTIVAR</button>
+                                                    <button type="submit" class="boton boton-agregar boton-pequeno">activar</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -623,18 +623,18 @@ foreach ($ventas as $v) {
                 <div class="modal-content" style="width:min(560px, 100%);">
                     <div class="modal-header">
                         <div>Eliminar sabor</div>
-                        <button type="button" id="close-delete-sabor-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
+                        
                     </div>
                     <div style="display:grid; gap:12px;">
                         <div style="padding:12px; border:1px solid #eee; border-radius:12px; background:#fff7f7;">
-                            ¿Seguro que querés eliminar el sabor <strong id="delete-sabor-nombre">—</strong>?
+                            ¿Seguro que querés desactivar el sabor <strong id="delete-sabor-nombre">—</strong>?
                             <div style="margin-top:6px; color:#8a1c1c; font-weight:700; font-size:.9rem;">
-                                Esta acción lo pasa a INACTIVO (no se puede deshacer desde acá).
+                                Esta acción lo pasa a INACTIVO (no se elimina).
                             </div>
                         </div>
                         <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                             <button type="button" id="cancel-delete-sabor" class="boton boton-secundario boton-pequeno">Cancelar</button>
-                            <button type="button" id="confirm-delete-sabor" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
+                            <button type="button" id="confirm-delete-sabor" class="boton boton-pequeno" style="background:#d32f2f;">Desactivar</button>
                         </div>
                     </div>
                 </div>
@@ -663,7 +663,6 @@ foreach ($ventas as $v) {
                 <div class="modal-content">
                     <div class="modal-header">
                         <div>Agregar accesorio nuevo</div>
-                        <button type="button" id="close-add-accesorio-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
                     </div>
                     <form id="add-accesorio-form" method="post" style="display:grid; gap:12px;">
                         <input type="hidden" name="submit_accesorio" value="1">
@@ -699,8 +698,8 @@ foreach ($ventas as $v) {
                             <th>PRECIO</th>
                             <th>STOCK</th>
                             <th>ESTADO</th>
-                            <th>✏️</th>
-                            <th>🗑</th>
+                            <th>EDITAR</th>
+                            <th>DESACTIVAR</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -721,7 +720,7 @@ foreach ($ventas as $v) {
                                     <td><?= sanitize($accesorio['stock_actual']) ?></td>
                                     <td><span class="badge insignia-normal">ACTIVO</span></td>
                                     <td><button type="button" class="boton-en-linea edit-accesorio-btn">✏️</button></td>
-                                    <td><button type="button" class="boton-en-linea delete-accesorio-btn">🗑️</button></td>
+                                    <td><button type="button" class="boton-en-linea delete-accesorio-btn">❌</button></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -816,18 +815,17 @@ foreach ($ventas as $v) {
                 <div class="modal-content" style="width:min(560px, 100%);">
                     <div class="modal-header">
                         <div>Eliminar accesorio</div>
-                        <button type="button" id="close-delete-accesorio-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
                     </div>
                     <div style="display:grid; gap:12px;">
                         <div style="padding:12px; border:1px solid #eee; border-radius:12px; background:#fff7f7;">
-                            ¿Seguro que querés eliminar el accesorio <strong id="delete-accesorio-nombre">—</strong>?
+                            ¿Seguro que querés desactivar el accesorio <strong id="delete-accesorio-nombre">—</strong>?
                             <div style="margin-top:6px; color:#8a1c1c; font-weight:700; font-size:.9rem;">
-                                Esta acción lo pasa a INACTIVO (no se puede deshacer desde acá).
+                                Esta acción lo pasa a INACTIVO (no se elimina).
                             </div>
                         </div>
                         <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                             <button type="button" id="cancel-delete-accesorio" class="boton boton-secundario boton-pequeno">Cancelar</button>
-                            <button type="button" id="confirm-delete-accesorio" class="boton boton-pequeno" style="background:#d32f2f;">Eliminar</button>
+                            <button type="button" id="confirm-delete-accesorio" class="boton boton-pequeno" style="background:#d32f2f;">Desactivar</button>
                         </div>
                     </div>
                 </div>
@@ -942,7 +940,6 @@ foreach ($ventas as $v) {
                 <div class="modal-content">
                     <div class="modal-header">
                         <div id="edit-stock-modal-title">Editar stock</div>
-                        <button type="button" id="close-edit-stock-modal" class="boton boton-secundario boton-pequeno">Cerrar</button>
                     </div>
                     <form id="edit-stock-form" method="post" style="display:grid; gap:12px;">
                         <input type="hidden" name="submit_stock_quick" value="1">
@@ -991,7 +988,6 @@ foreach ($ventas as $v) {
                             <th>PAGO</th>
                             <th>EMPLEADO</th>
                             <th>VER</th>
-                            <th>ELIM.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1008,7 +1004,6 @@ foreach ($ventas as $v) {
                                     <td><?= sanitize($venta['pago']) ?></td>
                                     <td><?= sanitize($venta['empleado']) ?></td>
                                     <td><a class="boton-en-linea" href="admin.php?venta=<?= sanitize($venta['id']) ?>#s-venta-detalle">👁️</a></td>
-                                    <td><button class="boton-en-linea">🗑️</button></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

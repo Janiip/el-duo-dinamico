@@ -230,8 +230,10 @@ body:not(:has(.pantalla:target)) #s-emp {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 100%;
     max-width: 640px;
     margin: 0 auto;
+    margin-right: 300px;
 }
 
 .item-venta {
@@ -353,12 +355,60 @@ body:not(:has(.pantalla:target)) #s-emp {
     opacity: .7;
 }
 
+.layout-venta {
+    display: grid;
+    grid-template-columns: minmax(220px, 260px) 1fr;
+    gap: 18px;
+    align-items: start;
+}
 
+/* Centrar el formulario dentro de su columna */
+.layout-venta > form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.layout-venta > form > * {
+    width: 100%;
+    max-width: 640px;
+}
+
+.panel-sabores-inactivos {
+    background: var(--lavanda);
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.panel-sabores-inactivos .titulo-sabores {
+    margin-bottom: 12px;
+}
+
+.panel-sabores-inactivos .boton-ver-inactivos {
+    width: 100%;
+    text-align: left;
+    padding-left: 0;
+}
+
+.panel-sabores-inactivos .sabores-inactivos-lista {
+    margin-top: 12px;
+}
+
+.panel-sabores-inactivos .pestanas-categoria-sabores {
+    justify-content: flex-start;
+}
+
+@media (max-width: 860px) {
+    .layout-venta {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* ── AGREGAR AL CARRITO / TOTAL / PAGO ── */
 .envoltorio-agregar-carrito {
     max-width: 640px;
     margin: 11px auto 0;
+    margin-right: 300px;
 }
 
 .boton-agregar-item {
@@ -376,6 +426,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     color: var(--granate);
     max-width: 640px;
     margin: 14px auto 0;
+    margin-right: 300px;
 }
 
 .caja-pago {
@@ -387,6 +438,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     gap: 9px;
     max-width: 640px;
     margin: 11px auto 0;
+    margin-right: 300px;
 }
 
 .titulo-pago {
@@ -431,6 +483,7 @@ body:not(:has(.pantalla:target)) #s-emp {
     gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
+    margin-right: -40px;
 }
 
 /* ── TICKET ── */
@@ -708,5 +761,112 @@ tr:hover td {
 
     .etiqueta-venta {
         min-width: unset;
+    }
+}
+
+/* ── BOTÓN IMPRIMIR ── */
+.boton-imprimir {
+    background: var(--granate);
+    color: var(--blanco);
+    gap: 6px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.boton-imprimir svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+/* ── IMPRESIÓN TÉRMICA (posnet 58 mm / 80 mm) ── */
+@media print {
+    /* Ocultar TODO excepto el ticket de cliente */
+    body > *:not(#print-ticket-overlay) {
+        display: none !important;
+    }
+
+    #print-ticket-overlay {
+        display: block !important;
+        position: static !important;
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* El overlay ocupa toda la hoja */
+    #print-ticket-overlay .ticket-print-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: #fff !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 10pt !important;
+        color: #000 !important;
+    }
+
+    #print-ticket-overlay .tp-title {
+        font-size: 13pt !important;
+        font-weight: 900 !important;
+        text-align: center !important;
+        letter-spacing: 3px !important;
+        margin-bottom: 2mm !important;
+        text-transform: uppercase !important;
+    }
+
+    #print-ticket-overlay .tp-sub {
+        text-align: center !important;
+        font-size: 8pt !important;
+        color: #444 !important;
+        margin-bottom: 3mm !important;
+    }
+
+    #print-ticket-overlay .tp-sep {
+        border: none !important;
+        border-top: 1px dashed #000 !important;
+        margin: 2mm 0 !important;
+    }
+
+    #print-ticket-overlay .tp-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        font-size: 9pt !important;
+        margin-bottom: 1mm !important;
+    }
+
+    #print-ticket-overlay .tp-item-name {
+        font-weight: 700 !important;
+        font-size: 9.5pt !important;
+    }
+
+    #print-ticket-overlay .tp-item-sabores {
+        font-size: 8pt !important;
+        color: #555 !important;
+        font-style: italic !important;
+        padding-left: 2mm !important;
+        margin-bottom: 1.5mm !important;
+    }
+
+    #print-ticket-overlay .tp-total {
+        font-size: 12pt !important;
+        font-weight: 900 !important;
+        text-align: right !important;
+        margin-top: 2mm !important;
+    }
+
+    #print-ticket-overlay .tp-footer {
+        text-align: center !important;
+        font-size: 8pt !important;
+        color: #555 !important;
+        margin-top: 4mm !important;
+    }
+
+    @page {
+        size: 80mm auto;
+        margin: 4mm 3mm;
     }
 }

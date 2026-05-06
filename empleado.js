@@ -93,13 +93,14 @@
     const toggleBtn = row.querySelector('.boton-ver-inactivos');
     const listaInactivos = row.querySelector('.sabores-inactivos-lista');
     if (toggleBtn && listaInactivos) {
-      const label = toggleBtn.textContent.trim();
+      const baseLabel = toggleBtn.dataset.label || toggleBtn.textContent.trim().replace(/^[▼▲]\s*/, '');
+      toggleBtn.dataset.label = baseLabel;
       toggleBtn.addEventListener('click', () => {
         const abierto = listaInactivos.style.display === 'block';
         listaInactivos.style.display = abierto ? 'none' : 'block';
-        toggleBtn.textContent = (abierto ? '▼ ' : '▲ ') + label;
+        toggleBtn.textContent = (abierto ? '▼ ' : '▲ ') + baseLabel;
       });
-      toggleBtn.textContent = '▼ ' + label;
+      toggleBtn.textContent = '▼ ' + baseLabel;
     }
   }
 
@@ -136,6 +137,22 @@
     });
   }
 
+  function setupInactiveToggle() {
+    const toggleBtn = document.querySelector('.panel-sabores-inactivos .boton-ver-inactivos');
+    const listaInactivos = document.querySelector('.panel-sabores-inactivos .sabores-inactivos-lista');
+    if (!toggleBtn || !listaInactivos) return;
+
+    const label = toggleBtn.dataset.label || toggleBtn.textContent.trim().replace(/^[▼▲]\s*/, '');
+    toggleBtn.dataset.label = label;
+
+    toggleBtn.addEventListener('click', () => {
+      const abierto = listaInactivos.style.display === 'block';
+      listaInactivos.style.display = abierto ? 'none' : 'block';
+      toggleBtn.textContent = (abierto ? '▼ ' : '▲ ') + label;
+    });
+    toggleBtn.textContent = '▼ ' + label;
+  }
+
   function addProductRow() {
     const container = document.getElementById('carrito');
     const template = document.querySelector('.item-producto');
@@ -158,6 +175,17 @@
 
     const hiddenContainer = newRow.querySelector('.hidden-flavors');
     if (hiddenContainer) hiddenContainer.innerHTML = '';
+
+    const toggleBtn = newRow.querySelector('.boton-ver-inactivos');
+    const listaInactivos = newRow.querySelector('.sabores-inactivos-lista');
+    if (toggleBtn) {
+      const label = toggleBtn.dataset.label || toggleBtn.textContent.trim().replace(/^[▼▲]\s*/, '');
+      toggleBtn.dataset.label = label;
+      toggleBtn.textContent = label;
+    }
+    if (listaInactivos) {
+      listaInactivos.style.display = 'none';
+    }
 
     container.appendChild(newRow);
     setupProductRow(newRow);
@@ -232,6 +260,74 @@
     });
   }
 
+  // ── IMPRESIÓN TICKET CLIENTE ────────────────────────────────────────────
+  /**
+   * Rellena el overlay de impresión con los datos del ticket del cliente
+   * y llama a window.print().
+   *
+   * @param {Object} opts
+   *   opts.orden   string   Número de orden/venta
+   *   opts.fecha   string   Fecha formateada
+   *   opts.total   string   Total formateado (ya con $)
+   *   opts.pago    string   Método de pago
+   *   opts.itemsHtml string HTML con los items (usa clases tp-item-*)
+   */
+  function buildAndPrint({ orden, fecha, total, pago, itemsHtml }) {
+    const overlay = document.getElementById('print-ticket-overlay');
+    if (!overlay) return;
+
+    document.getElementById('pt-orden').textContent  = 'Orden #' + orden;
+    document.getElementById('pt-fecha').textContent  = fecha;
+    document.getElementById('pt-total').textContent  = total;
+    document.getElementById('pt-pago').textContent   = pago;
+    document.getElementById('pt-items').innerHTML    = itemsHtml;
+
+    window.print();
+  }
+
+  /** Genera el HTML de items a partir del carrito activo (pantalla #s-ticket) */
+  function getItemsHtmlFromCart() {
+    const rows = document.querySelectorAll('.item-producto');
+    let html = '';
+    rows.forEach((row) => {
+      const productSelect  = row.querySelector('.tipo-producto');
+      const quantityInput  = row.querySelector('.cantidad-producto');
+      const selectedOption = productSelect?.selectedOptions?.[0];
+      if (!selectedOption || !selectedOption.value) return;
+
+      const quantity = Math.max(1, parseInt(quantityInput?.value ?? '1', 10) || 1);
+      const price    = parseFloat(selectedOption.dataset.price) || 0;
+      const name     = selectedOption.dataset.name || '';
+      const subtotal = price * quantity;
+
+      const selectedFlavors = Array.from(row.querySelectorAll('.sabor-boton.seleccionado'))
+        .map((btn) => btn.dataset.sabor);
+      const flavorText = selectedFlavors.length ? selectedFlavors.join(' / ') : '';
+
+      html += `<div style="margin-bottom:2mm;">
+        <div class="tp-item-name">${sanitizeJS(name)} x${quantity} — ${formatMoneyJS(subtotal)}</div>
+        ${flavorText ? `<div class="tp-item-sabores">${sanitizeJS(flavorText)}</div>` : ''}
+      </div>`;
+    });
+    return html;
+  }
+
+  /** Genera el HTML de items desde el detalle histórico (#s-venta-detalle) */
+  function getItemsHtmlFromDetail() {
+    const container = document.getElementById('detalle-items-2');
+    if (!container) return '';
+    let html = '';
+    container.querySelectorAll('.item-ticket').forEach((item) => {
+      const nameEl   = item.querySelector('.nombre-item-ticket');
+      const saborEl  = item.querySelector('.sabores-item-ticket');
+      html += `<div style="margin-bottom:2mm;">
+        <div class="tp-item-name">${nameEl ? nameEl.innerHTML : ''}</div>
+        ${saborEl ? `<div class="tp-item-sabores">${saborEl.textContent}</div>` : ''}
+      </div>`;
+    });
+    return html;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     // Si no estamos en la pestaña de venta, igual no pasa nada.
     document.querySelectorAll('.item-producto').forEach(setupProductRow);
@@ -246,6 +342,8 @@
       });
     });
 
+    setupInactiveToggle();
+
     const viewTicketBtn = document.getElementById('view-ticket');
     if (viewTicketBtn) {
       viewTicketBtn.addEventListener('click', (event) => {
@@ -255,6 +353,7 @@
       });
     }
 
+    // ── CONFIRMAR VENTA: guardar ticket en sessionStorage e imprimir ────────
     const submitSaleBtn = document.getElementById('submit-sale');
     if (submitSaleBtn) {
       submitSaleBtn.addEventListener('click', (event) => {
@@ -266,16 +365,71 @@
           location.hash = '#s-venta';
           return;
         }
-        document.getElementById('sale-form')?.submit();
+        // Guardar datos del ticket para poder reimprimir después del redirect
+        const ticketData = {
+          orden : document.getElementById('ticket-number-client')?.textContent?.replace('#', '') || '—',
+          fecha : document.getElementById('ticket-fecha-client')?.textContent || '—',
+          total : document.getElementById('ticket-total-client')?.textContent || '$0',
+          pago  : document.getElementById('ticket-pago-client')?.textContent || 'EFECTIVO',
+          items : getItemsHtmlFromCart(),
+        };
+        try { sessionStorage.setItem('dajana_last_ticket', JSON.stringify(ticketData)); } catch(e) {}
+
+        // Imprimir primero, luego enviar
+        buildAndPrint({
+          orden     : ticketData.orden,
+          fecha     : ticketData.fecha,
+          total     : ticketData.total,
+          pago      : ticketData.pago,
+          itemsHtml : ticketData.items,
+        });
+
+        // Pequeña pausa para que el diálogo de impresión se abra antes del redirect
+        setTimeout(() => { document.getElementById('sale-form')?.submit(); }, 400);
       });
     }
+    // ────────────────────────────────────────────────────────────────────────
 
     // Recalcular al cargar.
     recalculateTotal();
     setPaymentMethod('EFECTIVO');
 
+    // ── AL LLEGAR A #s-conf: recuperar ticket y activar REIMPRIMIR ──────────
     if (boot.ventaConfirmada) {
       location.hash = '#s-conf';
+
+      // Recuperar datos del ticket guardados antes del POST
+      let saved = null;
+      try { saved = JSON.parse(sessionStorage.getItem('dajana_last_ticket') || 'null'); } catch(e) {}
+
+      const btnReimprimirConf = document.getElementById('reimprimir-conf');
+      if (btnReimprimirConf && saved) {
+        btnReimprimirConf.addEventListener('click', () => {
+          buildAndPrint({
+            orden     : saved.orden,
+            fecha     : saved.fecha,
+            total     : saved.total,
+            pago      : saved.pago,
+            itemsHtml : saved.items,
+          });
+        });
+      }
     }
+    // ────────────────────────────────────────────────────────────────────────
+
+    // ── REIMPRIMIR desde historial (#s-venta-detalle) ────────────────────────
+    const btnReimprimirDetalle = document.getElementById('reimprimir-detalle');
+    if (btnReimprimirDetalle) {
+      btnReimprimirDetalle.addEventListener('click', () => {
+        buildAndPrint({
+          orden     : btnReimprimirDetalle.dataset.orden || '—',
+          fecha     : btnReimprimirDetalle.dataset.fecha || '—',
+          total     : btnReimprimirDetalle.dataset.total || '$0',
+          pago      : btnReimprimirDetalle.dataset.pago  || 'EFECTIVO',
+          itemsHtml : getItemsHtmlFromDetail(),
+        });
+      });
+    }
+    // ────────────────────────────────────────────────────────────────────────
   });
 })();
