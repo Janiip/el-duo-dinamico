@@ -1,13 +1,13 @@
 <?php
 // conexion.php
 // Ajusta estos valores según la configuración de XAMPP
-$host = 'localhost';
-$usuario = 'root';
+$servername = 'localhost';
+$username = 'root';
 $password = '';
 $base_de_datos = 'dajana_helados';
 
 // Crear conexión
-$conexion = new mysqli($host, $usuario, $password, $base_de_datos);
+$conexion = new mysqli($servername, $username, $password, $base_de_datos);
 
 // Verificar conexión
 if ($conexion->connect_errno) {

@@ -299,6 +299,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'Tipo de producto no válido para actualizar stock.';
         }
+    } elseif (isset($_POST['submit_caja_abrir'])) {
+        $empleadoApertura = intval($_POST['empleado_apertura'] ?? 0);
+
+        $existeCaja = null;
+        $stmtCheck = $conexion->prepare('SELECT id_caja FROM caja WHERE fecha = CURDATE() LIMIT 1');
+        if ($stmtCheck) {
+            $stmtCheck->execute();
+            $resCheck = $stmtCheck->get_result();
+            $existeCaja = $resCheck ? $resCheck->fetch_assoc() : null;
+            $stmtCheck->close();
+        }
+
+        if ($existeCaja) {
+            $error = 'La caja de hoy ya fue abierta.';
+        } elseif ($empleadoApertura <= 0) {
+            $error = 'Seleccioná el empleado que abre la caja.';
+        } else {
+            // No se pasa monto_inicial: la columna ya tiene DEFAULT 10000.00 en la tabla.
+            $stmt = $conexion->prepare('INSERT INTO caja (fecha, fecha_apertura, id_empleado_apertura, estado) VALUES (CURDATE(), NOW(), ?, \'ABIERTA\')');
+            if ($stmt) {
+                $stmt->bind_param('i', $empleadoApertura);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Caja abierta con $10.000 de inicio.') . '#s-caja');
+                    exit;
+                } else {
+                    $error = 'Error al abrir la caja: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la apertura de caja.';
+            }
+        }
+    } elseif (isset($_POST['submit_caja_cerrar'])) {
+        $idCaja = intval($_POST['id_caja'] ?? 0);
+        $empleadoCierre = intval($_POST['empleado_cierre'] ?? 0);
+        $efectivoContado = ($_POST['efectivo_contado'] ?? '') === '' ? -1 : floatval($_POST['efectivo_contado']);
+        $observacionesCaja = trim($_POST['observaciones_caja'] ?? '');
+
+        if ($idCaja <= 0) {
+            $error = 'No se encontró la caja del día para cerrar.';
+        } elseif ($empleadoCierre <= 0) {
+            $error = 'Seleccioná el empleado que cierra la caja.';
+        } elseif ($efectivoContado < 0) {
+            $error = 'Indicá el efectivo contado en caja.';
+        } else {
+            $totalEfectivo = 0.0;
+            $totalTransferencia = 0.0;
+            $cantidadVentasCierre = 0;
+            $rowsPagosCierre = fetchRows($conexion, 'SELECT metodo_pago, COUNT(*) AS cantidad, SUM(total_venta) AS total FROM ventas WHERE DATE(fecha) = CURDATE() GROUP BY metodo_pago');
+            foreach ($rowsPagosCierre as $r) {
+                $cantidadVentasCierre += intval($r['cantidad']);
+                if ($r['metodo_pago'] === 'EFECTIVO') {
+                    $totalEfectivo = floatval($r['total']);
+                } elseif ($r['metodo_pago'] === 'TRANSFERENCIA') {
+                    $totalTransferencia = floatval($r['total']);
+                }
+            }
+
+            $montoInicialCaja = 10000.00;
+            $stmtMonto = $conexion->prepare('SELECT monto_inicial FROM caja WHERE id_caja = ? LIMIT 1');
+            if ($stmtMonto) {
+                $stmtMonto->bind_param('i', $idCaja);
+                $stmtMonto->execute();
+                $resMonto = $stmtMonto->get_result();
+                $rowMonto = $resMonto ? $resMonto->fetch_assoc() : null;
+                $stmtMonto->close();
+                if ($rowMonto) {
+                    $montoInicialCaja = floatval($rowMonto['monto_inicial']);
+                }
+            }
+
+            $efectivoEsperado = $montoInicialCaja + $totalEfectivo;
+            $diferenciaCaja = $efectivoContado - $efectivoEsperado;
+
+            $stmt = $conexion->prepare('UPDATE caja SET fecha_cierre = NOW(), id_empleado_cierre = ?, total_efectivo_ventas = ?, total_transferencia_ventas = ?, cantidad_ventas = ?, efectivo_esperado = ?, efectivo_contado = ?, diferencia = ?, observaciones = ?, estado = \'CERRADA\' WHERE id_caja = ? AND estado = \'ABIERTA\'');
+            if ($stmt) {
+                $stmt->bind_param('iddidddsi', $empleadoCierre, $totalEfectivo, $totalTransferencia, $cantidadVentasCierre, $efectivoEsperado, $efectivoContado, $diferenciaCaja, $observacionesCaja, $idCaja);
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header('Location: admin.php?mensaje=' . urlencode('Caja cerrada correctamente.') . '#s-caja');
+                    exit;
+                } else {
+                    $error = 'Error al cerrar la caja: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar el cierre de caja.';
+            }
+        }
     }
 }
 
@@ -313,6 +403,41 @@ $sabores_categorias = fetchRows($conexion, 'SELECT DISTINCT tipo FROM sabores WH
 $accesorios = fetchRows($conexion, 'SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = \'ACTIVO\' ORDER BY nombre');
 $accesorios_inactivos = fetchRows($conexion, 'SELECT id_accesorio AS id, nombre, descripcion, precio, stock_actual FROM accesorios WHERE estado = \'INACTIVO\' ORDER BY nombre');
 $ventas = fetchRows($conexion, 'SELECT v.id_venta AS id, v.fecha, v.total_venta AS total, v.metodo_pago AS pago, IFNULL(u.nombre_usuario, "Sin empleado") AS empleado FROM ventas v LEFT JOIN usuarios u ON v.id_empleado = u.id_usuario ORDER BY v.fecha DESC LIMIT 20');
+
+$usuariosLista = fetchRows($conexion, 'SELECT id_usuario, nombre_usuario FROM usuarios ORDER BY nombre_usuario');
+
+$cajaHoy = null;
+$resultCajaHoy = $conexion->query('SELECT * FROM caja WHERE fecha = CURDATE() LIMIT 1');
+if ($resultCajaHoy) {
+    $cajaHoy = $resultCajaHoy->fetch_assoc();
+}
+$cajaAbierta = $cajaHoy && $cajaHoy['estado'] === 'ABIERTA';
+$cajaCerradaHoy = $cajaHoy && $cajaHoy['estado'] === 'CERRADA';
+
+$resumenPagosHoy = ['EFECTIVO' => 0.0, 'TRANSFERENCIA' => 0.0];
+$cantidadVentasHoyPago = 0;
+$rowsPagosHoy = fetchRows($conexion, 'SELECT metodo_pago, COUNT(*) AS cantidad, SUM(total_venta) AS total FROM ventas WHERE DATE(fecha) = CURDATE() GROUP BY metodo_pago');
+foreach ($rowsPagosHoy as $r) {
+    $resumenPagosHoy[$r['metodo_pago']] = floatval($r['total']);
+    $cantidadVentasHoyPago += intval($r['cantidad']);
+}
+$montoInicialCajaHoy = $cajaHoy ? floatval($cajaHoy['monto_inicial']) : 10000.00;
+$efectivoEsperadoHoy = $montoInicialCajaHoy + $resumenPagosHoy['EFECTIVO'];
+
+$empleadoAperturaNombre = '';
+$empleadoCierreNombre = '';
+if ($cajaHoy) {
+    foreach ($usuariosLista as $u) {
+        if (intval($u['id_usuario']) === intval($cajaHoy['id_empleado_apertura'] ?? 0)) {
+            $empleadoAperturaNombre = $u['nombre_usuario'];
+        }
+        if (intval($u['id_usuario']) === intval($cajaHoy['id_empleado_cierre'] ?? 0)) {
+            $empleadoCierreNombre = $u['nombre_usuario'];
+        }
+    }
+}
+
+$cajasHistorial = fetchRows($conexion, 'SELECT c.*, ua.nombre_usuario AS empleado_apertura_nombre, uc.nombre_usuario AS empleado_cierre_nombre FROM caja c LEFT JOIN usuarios ua ON c.id_empleado_apertura = ua.id_usuario LEFT JOIN usuarios uc ON c.id_empleado_cierre = uc.id_usuario ORDER BY c.fecha DESC LIMIT 30');
 
 $ventaDetalle = null;
 $ventaDetalleItems = [];
@@ -392,6 +517,7 @@ foreach ($ventas as $v) {
                 <a class="pestana-navegacion" href="#s-sabores">SABORES</a>
                 <a class="pestana-navegacion" href="#s-accesorios">ACCESORIOS</a>
                 <a class="pestana-navegacion" href="#s-stock">STOCK</a>
+                <a class="pestana-navegacion" href="#s-caja">CAJA</a>
                 <a class="pestana-navegacion" href="#s-historial">HISTORIAL</a>
             </div>
             <div class="tarjeta-panel">
@@ -413,6 +539,7 @@ foreach ($ventas as $v) {
                 <div class="estadistica">❌ Sabores sin stock: <span><?= sanitize($sinStock) ?></span></div>
                 <div class="estadistica">🍧❌ Sabores inactivos: <span><?= sanitize(count($sabores_inactivos)) ?></span></div>
                 <div class="estadistica">📦 Total ventas registradas: <span><?= sanitize($totalVentasRegistradas) ?></span></div>
+                <div class="estadistica">🗄️ Estado de caja hoy: <span><?= $cajaAbierta ? 'ABIERTA 🟢' : ($cajaCerradaHoy ? 'CERRADA 🔴' : 'SIN ABRIR ⚪') ?></span></div>
             </div>
         </div>
     </div>
@@ -1085,6 +1212,156 @@ foreach ($ventas as $v) {
                     <div class="info-detalle">Pago: <span><?= sanitize($ventaDetalle['pago']) ?></span></div>
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+
+    <div id="s-caja" class="pantalla">
+        <div class="encabezado">
+            <div class="logo">
+                <div class="logo-nombre"><img src="img/dajana-logo.png" alt="dajana"></div>
+                <div class="logo-subtitulo">helados</div>
+            </div>
+            <div class="botones-encabezado">
+                <div class="rol-encabezado">ADMIN</div>
+                <a class="boton boton-volver" href="#s-panel">VOLVER</a>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="titulo-pagina">CAJA DIARIA</div>
+
+            <?php if ($mensaje): ?>
+                <div style="color: #1b5e20; background:#e8f5e9; padding:10px; border-radius:8px; margin:10px 0;">
+                    <?= sanitize($mensaje) ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($error): ?>
+                <div style="color: #b71c1c; background:#ffebee; padding:10px; border-radius:8px; margin:10px 0;">
+                    <?= sanitize($error) ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="tarjeta-panel" style="margin-bottom:16px;">
+                <div class="titulo-panel">RESUMEN DE HOY (<?= sanitize(date('d/m/Y')) ?>)</div>
+                <div class="estadistica">💵 Ventas en efectivo: <span><?= formatMoney($resumenPagosHoy['EFECTIVO']) ?></span></div>
+                <div class="estadistica">💳 Ventas en transferencia: <span><?= formatMoney($resumenPagosHoy['TRANSFERENCIA']) ?></span></div>
+                <div class="estadistica">🧾 Cantidad de ventas hoy: <span><?= sanitize($cantidadVentasHoyPago) ?></span></div>
+                <div class="estadistica">📊 Total ventas hoy: <span><?= formatMoney($resumenPagosHoy['EFECTIVO'] + $resumenPagosHoy['TRANSFERENCIA']) ?></span></div>
+            </div>
+
+            <?php if (!$cajaHoy): ?>
+                <div class="tarjeta-panel">
+                    <div class="titulo-panel">ABRIR CAJA</div>
+                    <p style="font-weight:700; color:#555;">La caja de hoy todavía no fue abierta. Siempre se inicia con <?= formatMoney(10000) ?> en efectivo.</p>
+                    <form method="post" style="display:grid; gap:12px; max-width:420px;">
+                        <input type="hidden" name="submit_caja_abrir" value="1">
+                        <label style="display:block;">
+                            <span>Empleado que abre la caja</span><br>
+                            <select name="empleado_apertura" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                                <option value="">Seleccioná un empleado</option>
+                                <?php foreach ($usuariosLista as $u): ?>
+                                    <option value="<?= sanitize($u['id_usuario']) ?>"><?= sanitize($u['nombre_usuario']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </label>
+                        <div>
+                            <button type="submit" class="boton boton-agregar">🔓 ABRIR CAJA CON <?= formatMoney(10000) ?></button>
+                        </div>
+                    </form>
+                </div>
+            <?php elseif ($cajaAbierta): ?>
+                <div class="tarjeta-panel" style="margin-bottom:16px;">
+                    <div class="titulo-panel">CAJA ABIERTA 🟢</div>
+                    <div class="estadistica">🕐 Apertura: <span><?= sanitize(date('d/m/Y H:i', strtotime($cajaHoy['fecha_apertura']))) ?></span></div>
+                    <div class="estadistica">👤 Abrió: <span><?= sanitize($empleadoAperturaNombre ?: 'Sin datos') ?></span></div>
+                    <div class="estadistica">💰 Monto inicial: <span><?= formatMoney($cajaHoy['monto_inicial']) ?></span></div>
+                    <div class="estadistica">🧮 Efectivo esperado ahora: <span><?= formatMoney($efectivoEsperadoHoy) ?></span></div>
+                </div>
+
+                <div class="tarjeta-panel">
+                    <div class="titulo-panel">CERRAR CAJA</div>
+                    <form method="post" style="display:grid; gap:12px; max-width:420px;">
+                        <input type="hidden" name="submit_caja_cerrar" value="1">
+                        <input type="hidden" name="id_caja" value="<?= sanitize($cajaHoy['id_caja']) ?>">
+                        <label style="display:block;">
+                            <span>Empleado que cierra la caja</span><br>
+                            <select name="empleado_cierre" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                                <option value="">Seleccioná un empleado</option>
+                                <?php foreach ($usuariosLista as $u): ?>
+                                    <option value="<?= sanitize($u['id_usuario']) ?>"><?= sanitize($u['nombre_usuario']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </label>
+                        <label style="display:block;">
+                            <span>Efectivo contado en caja</span><br>
+                            <input type="number" step="0.01" min="0" name="efectivo_contado" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                        </label>
+                        <label style="display:block;">
+                            <span>Observaciones (opcional)</span><br>
+                            <textarea name="observaciones_caja" rows="2" style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;"></textarea>
+                        </label>
+                        <div>
+                            <button type="submit" class="boton boton-agregar">🔒 CERRAR CAJA</button>
+                        </div>
+                    </form>
+                </div>
+            <?php else: ?>
+                <div class="tarjeta-panel">
+                    <div class="titulo-panel">CAJA CERRADA 🔴</div>
+                    <div class="estadistica">🕐 Apertura: <span><?= sanitize(date('d/m/Y H:i', strtotime($cajaHoy['fecha_apertura']))) ?></span> por <span><?= sanitize($empleadoAperturaNombre ?: 'Sin datos') ?></span></div>
+                    <div class="estadistica">🕐 Cierre: <span><?= sanitize(date('d/m/Y H:i', strtotime($cajaHoy['fecha_cierre']))) ?></span> por <span><?= sanitize($empleadoCierreNombre ?: 'Sin datos') ?></span></div>
+                    <div class="estadistica">💰 Monto inicial: <span><?= formatMoney($cajaHoy['monto_inicial']) ?></span></div>
+                    <div class="estadistica">💵 Total efectivo vendido: <span><?= formatMoney($cajaHoy['total_efectivo_ventas']) ?></span></div>
+                    <div class="estadistica">💳 Total transferencia vendido: <span><?= formatMoney($cajaHoy['total_transferencia_ventas']) ?></span></div>
+                    <div class="estadistica">🧮 Efectivo esperado: <span><?= formatMoney($cajaHoy['efectivo_esperado']) ?></span></div>
+                    <div class="estadistica">🧾 Efectivo contado: <span><?= formatMoney($cajaHoy['efectivo_contado']) ?></span></div>
+                    <div class="estadistica">⚖️ Diferencia: <span><?= formatMoney($cajaHoy['diferencia']) ?></span></div>
+                    <?php if (trim((string) $cajaHoy['observaciones']) !== ''): ?>
+                        <div class="estadistica">📝 Observaciones: <span><?= sanitize($cajaHoy['observaciones']) ?></span></div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="titulo-pagina" style="margin-top:24px;">HISTORIAL DE CAJAS</div>
+            <div class="envoltorio-tabla-oscuro">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>FECHA</th>
+                            <th>APERTURA</th>
+                            <th>CIERRE</th>
+                            <th>INICIAL</th>
+                            <th>EFECTIVO</th>
+                            <th>TRANSF.</th>
+                            <th>ESPERADO</th>
+                            <th>CONTADO</th>
+                            <th>DIF.</th>
+                            <th>ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (count($cajasHistorial) === 0): ?>
+                            <tr>
+                                <td colspan="10" style="text-align:center; padding:18px 0;">No hay cajas registradas aun.</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($cajasHistorial as $c): ?>
+                                <tr>
+                                    <td><?= sanitize(date('d/m/Y', strtotime($c['fecha']))) ?></td>
+                                    <td><?= sanitize($c['empleado_apertura_nombre'] ?: '-') ?></td>
+                                    <td><?= sanitize($c['empleado_cierre_nombre'] ?: '-') ?></td>
+                                    <td><?= formatMoney($c['monto_inicial']) ?></td>
+                                    <td><?= formatMoney($c['total_efectivo_ventas']) ?></td>
+                                    <td><?= formatMoney($c['total_transferencia_ventas']) ?></td>
+                                    <td><?= $c['efectivo_esperado'] !== null ? formatMoney($c['efectivo_esperado']) : '-' ?></td>
+                                    <td><?= $c['efectivo_contado'] !== null ? formatMoney($c['efectivo_contado']) : '-' ?></td>
+                                    <td><?= $c['diferencia'] !== null ? formatMoney($c['diferencia']) : '-' ?></td>
+                                    <td><?= sanitize($c['estado']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
