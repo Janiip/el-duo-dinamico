@@ -409,6 +409,28 @@ function setupStockEditModal() {
     });
 }
 
+function setupCajaCerrarConfirm() {
+    const form = document.getElementById('form-cerrar-caja');
+    if (!form) return;
+    form.addEventListener('submit', (event) => {
+        const confirmado = window.confirm('¿Confirmás el cierre de caja? Una vez cerrada no se puede volver a abrir en el mismo día.');
+        if (!confirmado) {
+            event.preventDefault();
+        }
+    });
+}
+
+function setupCajaReabrirConfirm() {
+    const form = document.getElementById('form-reabrir-caja');
+    if (!form) return;
+    form.addEventListener('submit', (event) => {
+        const confirmado = window.confirm('¿Reabrir la caja de hoy? Se van a borrar los datos del cierre anterior (efectivo contado, diferencia, observaciones) para volver a cerrarla más tarde.');
+        if (!confirmado) {
+            event.preventDefault();
+        }
+    });
+}
+
 function setupSectionManagerModal() {
     const openButton = document.getElementById('edit-sections-button');
     const modal = document.getElementById('section-manager');
@@ -487,4 +509,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setupAddAccesorioModal();
     setupStockEditModal();
     setupSectionManagerModal();
+    setupCajaCerrarConfirm();
+    setupCajaReabrirConfirm();
 });

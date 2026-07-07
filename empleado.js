@@ -431,5 +431,17 @@
       });
     }
     // ────────────────────────────────────────────────────────────────────────
+
+    // ── CONFIRMAR CIERRE DE CAJA ──────────────────────────────────────────
+    const formCerrarCaja = document.getElementById('form-cerrar-caja');
+    if (formCerrarCaja) {
+      formCerrarCaja.addEventListener('submit', (event) => {
+        const confirmado = window.confirm('¿Confirmás el cierre de caja? Una vez cerrada no se puede volver a abrir en el mismo día.');
+        if (!confirmado) {
+          event.preventDefault();
+        }
+      });
+    }
+    // ────────────────────────────────────────────────────────────────────────
   });
 })();

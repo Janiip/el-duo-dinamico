@@ -71,6 +71,16 @@ if ($empleadoId === null) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
+    $cajaAbiertaVenta = false;
+    $resultCajaVenta = $conexion->query('SELECT estado FROM caja WHERE fecha = CURDATE() LIMIT 1');
+    if ($resultCajaVenta) {
+        $filaCajaVenta = $resultCajaVenta->fetch_assoc();
+        $cajaAbiertaVenta = $filaCajaVenta && $filaCajaVenta['estado'] === 'ABIERTA';
+    }
+
+    if (!$cajaAbiertaVenta) {
+        $error = 'La caja está cerrada. Abrí la caja antes de registrar una venta.';
+    } else {
     $productoIds = $_POST['producto_id'] ?? [];
     $cantidades = $_POST['cantidad'] ?? [];
     $metodoPago = $_POST['metodo_pago'] ?? 'EFECTIVO';
@@ -182,6 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_venta'])) {
                 $stmtVenta->close();
             }
         }
+    }
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_caja_abrir'])) {
     $existeCaja = null;
@@ -394,6 +405,7 @@ if ($ventaDetalleId > 0) {
             <?php if ($error): ?>
                 <div class="mensaje-error" style="margin-bottom:16px; padding:12px 14px; background:#ffebee; color:#b71c1c; border-radius:12px;"><?= sanitize($error) ?></div>
             <?php endif; ?>
+            <?php if ($cajaAbierta): ?>
             <div class="layout-venta">
                 <aside class="panel-sabores-inactivos">
                     <div class="titulo-sabores">SABORES INACTIVOS</div>
@@ -478,6 +490,13 @@ if ($ventaDetalleId > 0) {
                 <button type="button" id="view-ticket" class="boton boton-agregar boton-confirmar">VER TICKET</button>
                 <a class="boton boton-secundario" href="#s-emp">CANCELAR</a>
             </div>
+            <?php else: ?>
+            <div class="tarjeta-panel" style="max-width:520px; margin:0 auto; text-align:center;">
+                <div class="titulo-panel">🔒 CAJA CERRADA</div>
+                <p style="font-weight:700; margin-bottom:16px;">No podés registrar ventas hasta que se abra la caja del día.</p>
+                <a class="boton boton-agregar" href="#s-caja">IR A CAJA</a>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -603,16 +622,16 @@ if ($ventaDetalleId > 0) {
 
                 <div class="tarjeta-panel">
                     <div class="titulo-panel">CERRAR CAJA</div>
-                    <form method="post" style="display:grid; gap:12px; max-width:420px;">
+                    <form method="post" id="form-cerrar-caja" style="display:grid; gap:12px; max-width:420px;">
                         <input type="hidden" name="submit_caja_cerrar" value="1">
                         <input type="hidden" name="id_caja" value="<?= sanitize($cajaHoy['id_caja']) ?>">
                         <label style="display:block;">
                             <span>Efectivo contado en caja</span><br>
-                            <input type="number" step="0.01" min="0" name="efectivo_contado" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                            <input type="number" step="0.01" min="0" name="efectivo_contado" required class="campo-caja">
                         </label>
                         <label style="display:block;">
                             <span>Observaciones (opcional)</span><br>
-                            <textarea name="observaciones_caja" rows="2" style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;"></textarea>
+                            <textarea name="observaciones_caja" rows="2" class="campo-caja"></textarea>
                         </label>
                         <div>
                             <button type="submit" class="boton boton-agregar">🔒 CERRAR CAJA</button>

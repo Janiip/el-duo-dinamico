@@ -461,10 +461,6 @@ tr:hover td {
     border-color: var(--granate-dark);
 }
 
-.contenido-stock {
-    /* contenedor de las tabs y secciones de stock */
-}
-
 .seccion-stock {
     display: none;
 }
@@ -514,4 +510,42 @@ tr:hover td {
         font-size: .76rem;
         padding: 7px 11px;
     }
+}
+/* ── FORMULARIO CAJA ── */
+.campo-caja {
+    width: 100%;
+    background: var(--lavanda);
+    border: 2px solid var(--salmon);
+    border-radius: 30px;
+    padding: 9px 15px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .86rem;
+    color: var(--texto);
+    outline: none;
+}
+
+.campo-caja:focus {
+    border-color: var(--granate);
+}
+
+textarea.campo-caja {
+    border-radius: 14px;
+    resize: vertical;
+}
+
+/* ── ESTADO DE CAJA ── */
+.badge-caja-abierta {
+    background: #c8f0c8;
+    color: #2e7d32;
+}
+
+.badge-caja-cerrada {
+    background: #e0e0e0;
+    color: #444;
+}
+
+.badge-caja-sin-abrir {
+    background: #ffe0b2;
+    color: #e65100;
 }

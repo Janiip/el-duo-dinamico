@@ -635,6 +635,61 @@ body:not(:has(.pantalla:target)) #s-emp {
     flex-wrap: wrap;
 }
 
+/* ── PANEL (CAJA) ── */
+.tarjeta-panel {
+    background: var(--salmon-light);
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.titulo-panel {
+    background: var(--granate);
+    color: var(--blanco);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    padding: 12px;
+    border-radius: 11px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.estadistica {
+    background: var(--lavanda);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.estadistica span {
+    color: var(--granate);
+    font-weight: 800;
+}
+
+/* ── FORMULARIO CAJA ── */
+.campo-caja {
+    width: 100%;
+    background: var(--lavanda);
+    border: 2px solid var(--salmon);
+    border-radius: 30px;
+    padding: 9px 15px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .86rem;
+    color: var(--texto);
+    outline: none;
+}
+
+.campo-caja:focus {
+    border-color: var(--granate);
+}
+
+textarea.campo-caja {
+    border-radius: 14px;
+    resize: vertical;
+}
+
 /* ── HISTORIAL ── */
 .fila-flexible {
     display: flex;

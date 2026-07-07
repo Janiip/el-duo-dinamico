@@ -389,6 +389,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Error interno al preparar el cierre de caja.';
             }
         }
+    } elseif (isset($_POST['submit_caja_reabrir'])) {
+        $idCaja = intval($_POST['id_caja'] ?? 0);
+
+        if ($idCaja <= 0) {
+            $error = 'No se encontró la caja para reabrir.';
+        } else {
+            $stmt = $conexion->prepare("UPDATE caja SET estado = 'ABIERTA', fecha_cierre = NULL, id_empleado_cierre = NULL, total_efectivo_ventas = 0, total_transferencia_ventas = 0, cantidad_ventas = 0, efectivo_esperado = NULL, efectivo_contado = NULL, diferencia = NULL, observaciones = NULL WHERE id_caja = ? AND fecha = CURDATE() AND estado = 'CERRADA'");
+            if ($stmt) {
+                $stmt->bind_param('i', $idCaja);
+                if ($stmt->execute()) {
+                    $reabierta = $stmt->affected_rows > 0;
+                    $stmt->close();
+                    if ($reabierta) {
+                        header('Location: admin.php?mensaje=' . urlencode('Caja reabierta. Los datos del cierre anterior se borraron.') . '#s-caja');
+                        exit;
+                    } else {
+                        $error = 'Solo se puede reabrir la caja de hoy, y solo si está cerrada.';
+                    }
+                } else {
+                    $error = 'Error al reabrir la caja: ' . $conexion->error;
+                    $stmt->close();
+                }
+            } else {
+                $error = 'Error interno al preparar la reapertura de caja.';
+            }
+        }
     }
 }
 
@@ -473,17 +499,17 @@ foreach ($sabores as $s) {
     }
 }
 
-$totalVentasRegistradas = count($ventas);
-$numeroUltimaVenta = $ventas[0]['id'] ?? 0;
-$ventasDelDia = 0;
-$transaccionesHoy = 0;
-foreach ($ventas as $v) {
-    $fechaVenta = substr($v['fecha'], 0, 10);
-    if ($fechaVenta === date('Y-m-d')) {
-        $ventasDelDia += floatval($v['total']);
-        $transaccionesHoy++;
-    }
+$totalVentasRegistradas = 0;
+$rowTotalVentas = $conexion->query('SELECT COUNT(*) AS cantidad FROM ventas');
+if ($rowTotalVentas) {
+    $totalVentasRegistradas = intval($rowTotalVentas->fetch_assoc()['cantidad']);
 }
+$numeroUltimaVenta = null;
+if (!empty($ventas) && substr($ventas[0]['fecha'], 0, 10) === date('Y-m-d')) {
+    $numeroUltimaVenta = $ventas[0]['id'];
+}
+$ventasDelDia = $resumenPagosHoy['EFECTIVO'] + $resumenPagosHoy['TRANSFERENCIA'];
+$transaccionesHoy = $cantidadVentasHoyPago;
 ?>
 
 <!DOCTYPE html>
@@ -534,12 +560,12 @@ foreach ($ventas as $v) {
                 <?php endif; ?>
                 <div class="estadistica">💰 Ventas del día: <span><?= formatMoney($ventasDelDia) ?></span></div>
                 <div class="estadistica">🧾 Transacciones hoy: <span><?= sanitize($transaccionesHoy) ?></span></div>
-                <div class="estadistica">🔢 Última venta del día: <span>#<?= sanitize($numeroUltimaVenta) ?></span></div>
+                <div class="estadistica">🔢 Última venta del día: <span><?= $numeroUltimaVenta !== null ? '#' . sanitize($numeroUltimaVenta) : 'Sin ventas hoy' ?></span></div>
                 <div class="estadistica">⚠️ Sabores stock bajo (&lt;3L): <span><?= sanitize($stockBajo) ?></span></div>
                 <div class="estadistica">❌ Sabores sin stock: <span><?= sanitize($sinStock) ?></span></div>
                 <div class="estadistica">🍧❌ Sabores inactivos: <span><?= sanitize(count($sabores_inactivos)) ?></span></div>
                 <div class="estadistica">📦 Total ventas registradas: <span><?= sanitize($totalVentasRegistradas) ?></span></div>
-                <div class="estadistica">🗄️ Estado de caja hoy: <span><?= $cajaAbierta ? 'ABIERTA 🟢' : ($cajaCerradaHoy ? 'CERRADA 🔴' : 'SIN ABRIR ⚪') ?></span></div>
+                <div class="estadistica">🗄️ Estado de caja hoy: <span class="badge <?= $cajaAbierta ? 'badge-caja-abierta' : ($cajaCerradaHoy ? 'badge-caja-cerrada' : 'badge-caja-sin-abrir') ?>"><?= $cajaAbierta ? 'ABIERTA' : ($cajaCerradaHoy ? 'CERRADA' : 'SIN ABRIR') ?></span></div>
             </div>
         </div>
     </div>
@@ -1256,7 +1282,7 @@ foreach ($ventas as $v) {
                         <input type="hidden" name="submit_caja_abrir" value="1">
                         <label style="display:block;">
                             <span>Empleado que abre la caja</span><br>
-                            <select name="empleado_apertura" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                            <select name="empleado_apertura" required class="campo-caja">
                                 <option value="">Seleccioná un empleado</option>
                                 <?php foreach ($usuariosLista as $u): ?>
                                     <option value="<?= sanitize($u['id_usuario']) ?>"><?= sanitize($u['nombre_usuario']) ?></option>
@@ -1279,12 +1305,12 @@ foreach ($ventas as $v) {
 
                 <div class="tarjeta-panel">
                     <div class="titulo-panel">CERRAR CAJA</div>
-                    <form method="post" style="display:grid; gap:12px; max-width:420px;">
+                    <form method="post" id="form-cerrar-caja" style="display:grid; gap:12px; max-width:420px;">
                         <input type="hidden" name="submit_caja_cerrar" value="1">
                         <input type="hidden" name="id_caja" value="<?= sanitize($cajaHoy['id_caja']) ?>">
                         <label style="display:block;">
                             <span>Empleado que cierra la caja</span><br>
-                            <select name="empleado_cierre" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                            <select name="empleado_cierre" required class="campo-caja">
                                 <option value="">Seleccioná un empleado</option>
                                 <?php foreach ($usuariosLista as $u): ?>
                                     <option value="<?= sanitize($u['id_usuario']) ?>"><?= sanitize($u['nombre_usuario']) ?></option>
@@ -1293,11 +1319,11 @@ foreach ($ventas as $v) {
                         </label>
                         <label style="display:block;">
                             <span>Efectivo contado en caja</span><br>
-                            <input type="number" step="0.01" min="0" name="efectivo_contado" required style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;">
+                            <input type="number" step="0.01" min="0" name="efectivo_contado" required class="campo-caja">
                         </label>
                         <label style="display:block;">
                             <span>Observaciones (opcional)</span><br>
-                            <textarea name="observaciones_caja" rows="2" style="width:100%; padding:10px; border:1px solid #bbb; border-radius:10px;"></textarea>
+                            <textarea name="observaciones_caja" rows="2" class="campo-caja"></textarea>
                         </label>
                         <div>
                             <button type="submit" class="boton boton-agregar">🔒 CERRAR CAJA</button>
@@ -1318,6 +1344,11 @@ foreach ($ventas as $v) {
                     <?php if (trim((string) $cajaHoy['observaciones']) !== ''): ?>
                         <div class="estadistica">📝 Observaciones: <span><?= sanitize($cajaHoy['observaciones']) ?></span></div>
                     <?php endif; ?>
+                    <form method="post" id="form-reabrir-caja" style="margin-top:12px;">
+                        <input type="hidden" name="submit_caja_reabrir" value="1">
+                        <input type="hidden" name="id_caja" value="<?= sanitize($cajaHoy['id_caja']) ?>">
+                        <button type="submit" class="boton boton-secundario">🔓 REABRIR CAJA (por error)</button>
+                    </form>
                 </div>
             <?php endif; ?>
 
